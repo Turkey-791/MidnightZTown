@@ -216,54 +216,70 @@ AddEventHandler('onResourceStop', function(resource)
     unloadMap(resource)
 end)
 
-RegisterCommand("map", function(source, args)
-    if #args ~= 1 then
-        print("usage: map [mapname]")
-        return
-    end
+AddEventHandler('rconCommand', function(commandName, args)
+    if commandName == 'map' then
+        if #args ~= 1 then
+            RconPrint("usage: map [mapname]\n")
+        end
 
-    if not maps[args[1]] then
-        print('no such map ' .. args[1] .. '\n')
-        return
-    end
+        if not maps[args[1]] then
+            RconPrint('no such map ' .. args[1] .. "\n")
+            CancelEvent()
 
-    if currentGameType == nil or not doesMapSupportGameType(currentGameType, args[1]) then
-        local map = maps[args[1]]
-        local count = 0
-        local gt
+            return
+        end
 
-        for type, flag in pairs(map.gameTypes) do
-            if flag then
-                count = count + 1
-                gt = type
+        if currentGameType == nil or not doesMapSupportGameType(currentGameType, args[1]) then
+            local map = maps[args[1]]
+            local count = 0
+            local gt
+
+            for type, flag in pairs(map.gameTypes) do
+                if flag then
+                    count = count + 1
+                    gt = type
+                end
             end
+
+            if count == 1 then
+                print("Changing map from " .. getCurrentMap() .. " to " .. args[1] .. " (gt " .. gt .. ")")
+
+                changeGameType(gt)
+                changeMap(args[1])
+
+                RconPrint('map ' .. args[1] .. "\n")
+            else
+                RconPrint('map ' .. args[1] .. ' does not support ' .. currentGameType .. "\n")
+            end
+
+            CancelEvent()
+
+            return
         end
 
-        if count == 1 then
-            print("Changing map from " .. getCurrentMap() .. " to " .. args[1] .. " (gt " .. gt .. ")")
+        changeMap(args[1])
 
-            changeGameType(gt)
-            changeMap(args[1])
+        RconPrint('map ' .. args[1] .. "\n")
 
-            print('map ' .. args[1] .. "\n")
-        else
-            print('map ' .. args[1] .. ' does not support ' .. currentGameType .. "\n")
+        CancelEvent()
+    elseif commandName == 'gametype' then
+        if #args ~= 1 then
+            RconPrint("usage: gametype [name]\n")
         end
-    end
-end, true)
 
-RegisterCommand("gametype", function(source, args)
-    if #args ~= 1 then
-       print("usage: gametype [name]\n")
-       return
-    end
+        if not gametypes[args[1]] then
+            RconPrint('no such gametype ' .. args[1] .. "\n")
+            CancelEvent()
 
-    if not gametypes[args[1]] then
-        print('no such gametype ' .. args[1] .. "\n")
-        return
+            return
+        end
+
+        changeGameType(args[1])
+
+        RconPrint('gametype ' .. args[1] .. "\n")
+
+        CancelEvent()
     end
-    changeGameType(args[1])
-    print('gametype ' .. args[1] .. "\n")
 end)
 
 function getCurrentGameType()
