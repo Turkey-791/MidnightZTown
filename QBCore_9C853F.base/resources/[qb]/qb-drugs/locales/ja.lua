@@ -1,0 +1,95 @@
+--[[
+FXServer：Ver25770／更新日：2026年4月8日
+日本語翻訳：揚げポテGameSV (@agepote_x_info)
+当翻訳はFiveMとは関係なく非公認です。
+※二次配布及び自作発言禁止
+]]--
+
+local Translations = {
+    error = {
+        has_no_drugs = "薬物を所持していません",
+        not_enough_police = "十分な警察官が職務に就いていません（%{polices}人必要）",
+        no_drugs_left = "販売する薬物が残っていません",
+        too_far_away = "遠すぎます",
+        offer_declined = "オファーが拒否されました",
+        no_player_nearby = "近くにプレイヤーがいません",
+        pending_delivery = "まだ配達を完了する必要があります、何を待っているのですか？！",
+        item_unavailable = "このアイテムは利用できません、返金されました",
+        order_not_right = "これは注文と一致しません",
+        too_late = "遅すぎます",
+        dealer_already_exists = "この名前のディーラーはすでに存在します",
+        dealer_not_exists = "このディーラーは存在しません",
+        no_dealers = "ディーラーは配置されていません",
+        dealer_not_exists_command = "ディーラー %{dealerName} は存在しません",
+        in_vehicle = "車両内では販売できません",
+        delivery_fail = "現在、配達が見つかりませんでした。申し訳ありません！",
+    },
+    success = {
+        helped_player = "人を助け起こしました",
+        route_has_been_set = "配達場所へのルートがマップに設定されました",
+        teleported_to_dealer = "%{dealerName}にテレポートしました",
+        offer_accepted = "オファーが承認されました",
+        order_delivered = "注文が配達されました",
+        dealer_deleted = "ディーラー %{dealerName} が削除されました",
+    },
+    info = {
+        started_selling_drugs = "薬物の密売を開始しました",
+        stopped_selling_drugs = "薬物の密売を終了しました",
+        has_been_robbed = "強盗に%{drugType}を %{bags}袋 奪われました",
+        suspicious_situation = "不審な状況",
+        possible_drug_dealing = "薬物取引の疑い",
+        drug_offer = "[E] %{drugLabel} %{bags}個を $%{randomPrice} で売る / [G] 断る",
+        target_drug_offer = "%{drugLabel} %{bags}個を $%{randomPrice} で売りますか？",
+        search_ped = "所持品を検査する",
+        pick_up_button = "[E] 拾う",
+        knock_button = "[E] ノックする",
+        target_knock = 'ドアをノックする',
+        target_deliver = '薬物を届ける',
+        target_openshop = 'ショップを開く',
+        target_request = '配達を依頼する',
+        mystery_man_button = "[E] 購入 / [G] 仲間に協力する ($5000)",
+        other_dealers_button = "[E] 購入 / [G] ミッションを開始",
+        reviving_player = "蘇生中...",
+        dealer_name = "ディーラー: %{dealerName}",
+        sending_delivery_email = "これが商品だ。詳細はメールで送る",
+        mystery_man_knock_message = "やあ。私に何か用かな？",
+        treated_fred_bad = "あいにくだが、もうお前とは取引しない… 俺への接し方を考え直すべきだったな",
+        fred_knock_message = "よお %{firstName}、今日は何の用だ？",
+        no_one_home = "誰もいないようだ",
+        delivery_info_email = "配達に関する詳細だ。<br>内容: <br> %{itemAmount}x %{itemLabel}<br><br> 遅れるなよ",
+        deliver_items_button = "[E] %{itemLabel} (%{itemAmount}個) を渡す",
+        delivering_products = "商品を配達中...",
+        drug_deal_alert = "緊急通報: 薬物取引の疑い",
+        perfect_delivery = "いい仕事だった、また会おう。 <br><br> 署名: %{dealerName}",
+        bad_delivery = "あなたの配達について苦情を受けています、二度と起こさないでください",
+        late_delivery = "時間通りではありませんでした。ビジネスよりも重要な用事があったのですか？",
+        police_message_server = "%{street}で不審な状況が確認されました、薬物取引の可能性があります",
+        drug_deal = "薬物取引",
+        newdealer_command_desc = "ディーラーを配置する（管理者のみ）",
+        newdealer_command_help1_name = "名前",
+        newdealer_command_help1_help = "ディーラー名",
+        newdealer_command_help2_name = "最小",
+        newdealer_command_help2_help = "最小時間",
+        newdealer_command_help3_name = "最大",
+        newdealer_command_help3_help = "最大時間",
+        deletedealer_command_desc = "ディーラーを削除する（管理者のみ）",
+        deletedealer_command_help1_name = "名前",
+        deletedealer_command_help1_help = "ディーラー名",
+        dealers_command_desc = "全てのディーラーを表示する（管理者のみ）",
+        dealergoto_command_desc = "ディーラーにテレポートする（管理者のみ）",
+        dealergoto_command_help1_name = "名前",
+        dealergoto_command_help1_help = "ディーラー名",
+        list_dealers_title = "全てのディーラーのリスト：",
+        list_dealers_name_prefix = "名前：",
+        selling_to_ped = "薬物販売中...",
+        delivery_search = "現在、配送先を検索中です...",
+    }
+}
+
+if GetConvar('qb_locale', 'en') == 'ja' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end

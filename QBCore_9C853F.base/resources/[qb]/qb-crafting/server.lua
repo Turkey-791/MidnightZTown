@@ -51,43 +51,24 @@ RegisterNetEvent('qb-crafting:server:addCraftingTable', function(benchType)
     TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[benchType], 'add')
 end)
 
-RegisterNetEvent('qb-crafting:server:receiveItem', function(benchType, craftedItem, amountToCraft)
+RegisterNetEvent('qb-crafting:server:receiveItem', function(craftedItem, requiredItems, amountToCraft, xpGain, xpType)
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
-
-    local benchConfig = Config[benchType]
-    if not benchConfig or type(benchConfig.recipes) ~= 'table' then return end
-
-    amountToCraft = tonumber(amountToCraft)
-    if not amountToCraft or amountToCraft <= 0 then return end
-
-    local recipe
-    for _, configuredRecipe in pairs(benchConfig.recipes) do
-        if configuredRecipe.item == craftedItem then
-            recipe = configuredRecipe
-            break
-        end
-    end
-    if not recipe then return end
-
-    local xpType = benchConfig.xpType or 'craftingrep'
-    local currentXP = Player.PlayerData and Player.PlayerData.metadata and Player.PlayerData.metadata[xpType] or 0
-    if (recipe.xpRequired or 0) > currentXP then return end
-
-    for _, requiredItem in ipairs(recipe.requiredItems or {}) do
-        local totalRequiredAmount = requiredItem.amount * amountToCraft
-        if not exports['qb-inventory']:RemoveItem(src, requiredItem.item, totalRequiredAmount, false, 'qb-crafting:server:receiveItem') then
+    local canGive = true
+    for _, requiredItem in ipairs(requiredItems) do
+        if not exports['qb-inventory']:RemoveItem(src, requiredItem.item, requiredItem.amount, false, 'qb-crafting:server:receiveItem') then
+            canGive = false
             return
         end
         TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[requiredItem.item], 'remove')
     end
-
-    if not exports['qb-inventory']:AddItem(src, craftedItem, amountToCraft, false, false, 'qb-crafting:server:receiveItem') then return end
-
-    TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[craftedItem], 'add')
-    TriggerClientEvent('QBCore:Notify', src, string.format(Lang:t('notifications.craftMessage'), sharedItems[craftedItem].label), 'success')
-    IncreasePlayerXP(src, (recipe.xpGain or 0) * amountToCraft, xpType)
+    if canGive then
+        if not exports['qb-inventory']:AddItem(src, craftedItem, amountToCraft, false, false, 'qb-crafting:server:receiveItem') then return end
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[craftedItem], 'add')
+        TriggerClientEvent('QBCore:Notify', src, string.format(Lang:t('notifications.craftMessage'), sharedItems[craftedItem].label), 'success')
+        IncreasePlayerXP(src, xpGain, xpType)
+    end
 end)
 
 -- Items

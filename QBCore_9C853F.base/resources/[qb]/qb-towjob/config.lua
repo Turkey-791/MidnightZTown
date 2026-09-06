@@ -10,15 +10,15 @@ Config.Vehicles = {
 
 Config.Locations = {
     ["main"] = {
-        label = "Towing HQ",
+        label = "牽引本部",
         coords = vector4(471.39, -1311.03, 29.21, 114.5),
     },
     ["vehicle"] = {
-        label = "Flatbed",
+        label = "フラットベッド",
         coords = vector4(489.65, -1331.82, 29.33, 306.5),
     },
     ["dropoff"] = {
-        label = "Vehicle Drop Off Location",
+        label = "車両の降車場所",
         coords = vector3(491.00, -1314.69, 29.25)
     },
     ["towspots"] = {

@@ -1,44 +1,51 @@
+/*
+FXServer：Ver17000／更新日：2025年7月31日
+日本語翻訳：揚げポテGameSV (@agepote_x_info)
+当翻訳はFiveMとは関係なく非公認です。
+※二次配布及び自作発言禁止
+*/
+
 const { ref } = Vue
 
-// Customize language for dialog menus and carousels here
+// ダイアログメニューとカルーセルの言語をここでカスタマイズします
 
 const load = Vue.createApp({
   setup () {
     return {
-      CarouselText1: 'You can add/remove items, vehicles, jobs & gangs through the shared folder.',
-      CarouselSubText1: 'Photo captured by: Markyoo#8068',
-      CarouselText2: 'Adding additional player data can be achieved by modifying the qb-core player.lua file.',
-      CarouselSubText2: 'Photo captured by: ihyajb#9723',
-      CarouselText3: 'All server-specific adjustments can be made in the config.lua files throughout the build.',
-      CarouselSubText3: 'Photo captured by: FLAPZ[INACTIV]#9925',
-      CarouselText4: 'For additional support please join our community at discord.gg/qbcore',
-      CarouselSubText4: 'Photo captured by: Robinerino#1312',
+      CarouselText1: '共有フォルダからアイテム、車両、ジョブ、ギャングを追加/削除できます。',
+      CarouselSubText1: '写真撮影者: Markyoo#8068',
+      CarouselText2: '追加のプレイヤーデータを追加するには、qb-core player.luaファイルを変更することで可能です。',
+      CarouselSubText2: '写真撮影者: ihyajb#9723',
+      CarouselText3: 'サーバー固有の調整はすべて、ビルド全体のconfig.luaファイルで行うことができます。',
+      CarouselSubText3: '写真撮影者: FLAPZ[INACTIV]#9925',
+      CarouselText4: 'さらにサポートが必要な場合は、discord.gg/qbcore のコミュニティに参加してください。',
+      CarouselSubText4: '写真撮影者: Robinerino#1312',
 
-      DownloadTitle: 'Downloading QBCore Server',
-      DownloadDesc: "Hold tight while we begin downloading all the resources/assets required to play on QBCore Server. \n\nAfter download has been finished successfully, you'll be placed into the server and this screen will disappear. Please don't leave or turn off your PC. ",
+      DownloadTitle: 'QBCoreサーバーをダウンロード中',
+      DownloadDesc: "QBCoreサーバーでプレイするために必要なすべてのリソース/アセットのダウンロードを開始しますので、しばらくお待ちください。 \n\nダウンロードが正常に完了すると、サーバーに配置され、この画面は消えます。PCを離れたり、電源を切ったりしないでください。 ",
 
-      SettingsTitle: 'Settings',
-      AudioTrackDesc1: 'When disabled the current audio-track playing will be stopped.',
-      AutoPlayDesc2: 'When disabled carousel images will stop cycling and remain on the last shown.',
-      PlayVideoDesc3: 'When disabled video will stop playing and remain paused.',
+      SettingsTitle: '設定',
+      AudioTrackDesc1: '無効にすると、現在再生中の音声トラックが停止します。',
+      AutoPlayDesc2: '無効にすると、カルーセルの画像が循環を停止し、最後に表示されたままになります。',
+      PlayVideoDesc3: '無効にすると、動画の再生が停止し、一時停止したままになります。',
 
-      KeybindTitle: 'Default Keybinds',
-      Keybind1: 'Open Inventory',
-      Keybind2: 'Cycle Proximity',
-      Keybind3: 'Open Phone',
-      Keybind4: 'Toggle Seat Belt',
-      Keybind5: 'Open Target Menu',
-      Keybind6: 'Radial Menu',
-      Keybind7: 'Open Hud Menu',
-      Keybind8: 'Talk Over Radio',
-      Keybind9: 'Open Scoreboard',
-      Keybind10: 'Vehicle Locks',
-      Keybind11: 'Toggle Engine',
-      Keybind12: 'Pointer Emote',
-      Keybind13: 'Keybind Slots',
-      Keybind14: 'Hands Up Emote',
-      Keybind15: 'Use Item Slots',
-      Keybind16: 'Cruise Control',
+      KeybindTitle: '初期のキー割り当て',
+      Keybind1: 'インベントリを開く',
+      Keybind2: 'プロキシミティを循環',
+      Keybind3: 'スマホを開く',
+      Keybind4: 'シートベルト切り替え',
+      Keybind5: 'ターゲットメニューを開く',
+      Keybind6: 'ラジアルメニュー',
+      Keybind7: 'HUDメニューを開く',
+      Keybind8: '無線で話す',
+      Keybind9: 'スコアボードを開く',
+      Keybind10: '車両のロック',
+      Keybind11: 'エンジン切り替え',
+      Keybind12: 'ポインターエモート',
+      Keybind13: 'キー割り当てスロット',
+      Keybind14: 'ハンズアップエモート',
+      Keybind15: 'アイテムスロットを使用',
+      Keybind16: 'クルーズコントロール',
 
       firstap: ref(true),
       secondap: ref(true),

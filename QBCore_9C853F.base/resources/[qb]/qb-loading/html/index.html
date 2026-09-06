@@ -11,20 +11,20 @@
         <script src="https://cdn.jsdelivr.net/npm/quasar@2.1.0/dist/quasar.umd.prod.js" defer></script>
         <script src="app.js" defer></script>
     </head>
-    <!-- This is where you want to replace with your audio -->
+    <!-- ここにオーディオを置き換えてください -->
 
     <audio autoplay loop id="audio" src="/assets/audio/noncopyright.mp3"></audio>
 
     <body>
         <div id="loading-main" style="min-height: auto;">
 
-            <!-- Uncomment q-parallax and comment out q-carousel if you want to use a video background instead -->
+            <!-- 代わりに動画の背景を使用したい場合は、q-parallax のコメントを解除し、q-carousel のコメントを無効にしてください。 -->
 
             <q-carousel animated v-model="firstslide" :autoplay="secondap" ref="carousel" infinite>
                 <q-carousel-slide :name="1" img-src="/assets/images/1.png"></q-carousel-slide>
             </q-carousel>
 
-            <!-- This is where you want to replace with your video -->
+            <!-- ここに動画を挿入してください -->
 
 
             <!-- <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
@@ -178,7 +178,7 @@
                 <q-card flat style="width: auto; background: transparent;">
                     <q-card-section class="row items-center no-wrap">
 
-                        <!-- This is where you want to replace with your logo -->
+                        <!-- ここにあなたのロゴを入れ替えてください -->
 
                         <img class="cursor-none brand-logo" src="/assets/branding/qbcore.svg"></img>
                         <q-space></q-space>
@@ -204,7 +204,7 @@
                     </q-card-section>
 
                     <q-card-actions align="left">
-                        <q-btn flat label="Hide details" color="detailbutton" v-close-popup></q-btn>
+                        <q-btn flat label="詳細を隠す" color="detailbutton" v-close-popup></q-btn>
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -220,15 +220,15 @@
                     </q-card-section>
 
                     <q-card-section style="padding-top: 0px;">
-                        <q-toggle v-model="audioplay" size="lg" checked-icon="headset" keep-color color="togglecolor" label="Audio-track Enabled" unchecked-icon="headset_off" onclick="audiotoggle()"></q-toggle>
+                        <q-toggle v-model="audioplay" size="lg" checked-icon="headset" keep-color color="togglecolor" label="音声トラックを有効にする" unchecked-icon="headset_off" onclick="audiotoggle()"></q-toggle>
                         <div style="white-space: pre-wrap;" class="text-h7 text-weight-medium q-mb-md-d">
                             {{ AudioTrackDesc1 }}
                         </div>
-                        <q-toggle v-model="secondap" size="lg" checked-icon="view_carousel" keep-color color="togglecolor" label="Auto-play Enabled" unchecked-icon="image"></q-toggle>
+                        <q-toggle v-model="secondap" size="lg" checked-icon="view_carousel" keep-color color="togglecolor" label="自動再生を有効にする" unchecked-icon="image"></q-toggle>
                         <div style="white-space: pre-wrap;" class="text-h7 text-weight-medium q-mb-md-d">
                             {{ AutoPlayDesc2 }}
                         </div>
-                        <q-toggle v-model="playvideo" size="lg" checked-icon="play_arrow" keep-color color="togglecolor" label="Play-video Enabled" unchecked-icon="play_disabled" onclick="videotoggle()"></q-toggle>
+                        <q-toggle v-model="playvideo" size="lg" checked-icon="play_arrow" keep-color color="togglecolor" label="ビデオ再生を有効にする" unchecked-icon="play_disabled" onclick="videotoggle()"></q-toggle>
                         <div style="white-space: pre-wrap;" class="text-h7 text-weight-medium q-mb-md-d">
                             {{ PlayVideoDesc3 }}
                         </div>

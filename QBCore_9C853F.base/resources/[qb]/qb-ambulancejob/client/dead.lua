@@ -106,7 +106,6 @@ AddEventHandler('gameEventTriggered', function(event, data)
         if not IsEntityAPed(victim) then return end
         if victimDied and NetworkGetPlayerIndexFromPed(victim) == PlayerId() and IsEntityDead(PlayerPedId()) then
             if not InLaststand then
-                TriggerMedalClip()
                 SetLaststand(true)
             elseif InLaststand and not isDead then
                 SetLaststand(false)

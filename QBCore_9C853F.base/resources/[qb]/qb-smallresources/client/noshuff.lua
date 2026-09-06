@@ -28,3 +28,6 @@ end)
 RegisterCommand('shuff', function()
     TriggerEvent('SeatShuffle')
 end, false)
+
+--- 座席移動コマンドをキーバインドに登録 (2026.08.23 potato)
+RegisterKeyMapping('shuff', '座席を移動する', 'keyboard', 'G')

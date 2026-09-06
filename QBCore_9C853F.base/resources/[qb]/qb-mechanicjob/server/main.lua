@@ -17,18 +17,6 @@ local function IsVehicleOwned(plate)
     return false
 end
 
-local function IsVehicleOwnedBy(plate, citizenid)
-    local result = MySQL.scalar.await('SELECT 1 FROM player_vehicles WHERE plate = ? AND citizenid = ?', { plate, citizenid })
-    if result then return true end
-    return false
-end
-
-local function PlayerHasMechanicJob(src)
-    local Player = exports['qb-core']:GetPlayer(src)
-    if not Player then return false end
-    return Player.PlayerData.job.type == 'mechanic'
-end
-
 local function StartParticles(coords, netId, color)
     for _, playerId in ipairs(GetPlayers()) do
         local playerPed = GetPlayerPed(playerId)
@@ -74,13 +62,6 @@ local function TransitionVehicleColor(vehicle, section, currentColor, targetColo
     end
 end
 
-local function GetPaintTypeIndex(type)
-    if type == 'metallic' then return 0 end
-    if type == 'matte' then return 12 end
-    if type == 'chrome' then return 120 end
-    return 0
-end
-
 -- Callbacks
 
 QBCore.Functions.CreateCallback('qb-mechanicjob:server:getnitrousVehicles', function(_, cb)
@@ -93,7 +74,10 @@ QBCore.Functions.CreateCallback('qb-mechanicjob:server:checkTune', function(_, c
 end)
 
 QBCore.Functions.CreateCallback('qb-mechanicjob:server:getVehicleStatus', function(_, cb, plate)
-    if not vehicleComponents[plate] then cb(false) end
+    if not vehicleComponents[plate] then
+        cb(false)
+        return
+    end
     cb(vehicleComponents[plate])
 end)
 
@@ -109,11 +93,14 @@ end)
 
 RegisterNetEvent('qb-mechanicjob:server:stash', function(data)
     local src = source
-    local shopName = data.job
+    -- [ジョブ統一] data.job は統一後のジョブ名(例: 'mechanic')になったため、
+    -- 金庫がどの物理店舗のものかは data.shop (qb-target側で追加した物理店舗キー)で判定する。
+    -- これにより、mechanic/mechanic2/mechanic3の金庫は引き続き物理的に別々のまま残る。
+    local shopName = data.shop
     if not Config.Shops[shopName] then return end
     local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
-    if Config.Shops[shopName].managed and Player.PlayerData.job.name ~= shopName then return end
+    if Config.Shops[shopName].managed and Player.PlayerData.job.name ~= Config.Shops[shopName].job then return end
     local playerPed = GetPlayerPed(src)
     local playerCoords = GetEntityCoords(playerPed)
     local stashCoords = Config.Shops[shopName].stash
@@ -128,22 +115,46 @@ end)
 
 RegisterNetEvent('qb-mechanicjob:server:sprayVehicleCustom', function(netId, section, type, color)
     local vehicle = NetworkGetEntityFromNetworkId(netId)
+    if not vehicle or vehicle == 0 then return end
     local vehicleCoords = GetEntityCoords(vehicle)
-    local paintTypeIndex = GetPaintTypeIndex(type)
     FreezeEntityPosition(vehicle, true)
     StartParticles(vehicleCoords, netId, color)
-    local r, g, b
+
+    -- [Phase1 fix / P1-1] 「本当にカスタムRGBが設定されている場合」だけ現在色を取得する。
+    -- GTA Vのnativeには標準カラーIndexをRGBへ変換する手段が無いため、
+    -- 標準カラーから遷移する場合は正しい開始色を作れない(白などを適当にfallbackさせない)。
+    -- また、旧実装は塗装タイプ定数(metallic=0/matte=12/chrome=120)を
+    -- SetVehicleColoursの標準カラーIndexとして誤用していたため、この呼び出しは撤去した。
+    local currentColor
     if section == 'primary' then
-        local _, colorSecondary = GetVehicleColours(vehicle)
-        SetVehicleColours(vehicle, paintTypeIndex, colorSecondary)
-        r, g, b = GetVehicleCustomPrimaryColour(vehicle)
+        if GetIsVehiclePrimaryColourCustom(vehicle) then
+            local r, g, b = GetVehicleCustomPrimaryColour(vehicle)
+            if r and g and b then
+                currentColor = { r = r, g = g, b = b }
+            end
+        end
     elseif section == 'secondary' then
-        local colorPrimary, _ = GetVehicleColours(vehicle)
-        SetVehicleColours(vehicle, colorPrimary, paintTypeIndex)
-        r, g, b = GetVehicleCustomSecondaryColour(vehicle)
+        if GetIsVehicleSecondaryColourCustom(vehicle) then
+            local r, g, b = GetVehicleCustomSecondaryColour(vehicle)
+            if r and g and b then
+                currentColor = { r = r, g = g, b = b }
+            end
+        end
     end
-    local currentColor = { r = r, g = g, b = b }
-    TransitionVehicleColor(vehicle, section, currentColor, color, Config.PaintTime * 1000)
+
+    if currentColor then
+        -- 現在色(カスタムRGB)が判明している場合のみ、なめらかにフェードさせる
+        TransitionVehicleColor(vehicle, section, currentColor, color, Config.PaintTime * 1000)
+    else
+        -- 現在色が不明(標準カラーからの変更)な場合は、誤った色を経由させず即時に目的の色を適用する
+        Wait(Config.PaintTime * 1000)
+        if section == 'primary' then
+            SetVehicleCustomPrimaryColour(vehicle, color.r, color.g, color.b)
+        elseif section == 'secondary' then
+            SetVehicleCustomSecondaryColour(vehicle, color.r, color.g, color.b)
+        end
+    end
+
     StopParticles()
     FreezeEntityPosition(vehicle, false)
 end)
@@ -214,14 +225,9 @@ RegisterNetEvent('qb-mechanicjob:server:tuneStatus', function(plate)
 end)
 
 RegisterNetEvent('qb-mechanicjob:server:SaveVehicleProps', function(vehicleProps)
-    local src = source
-    local Player = exports['qb-core']:GetPlayer(src)
-    if not Player then return end
-    local plate = vehicleProps.plate
-    local citizenid = Player.PlayerData.citizenid
-    -- Allow if the caller owns the vehicle or is an active mechanic
-    if not (IsVehicleOwnedBy(plate, citizenid) or PlayerHasMechanicJob(src)) then return end
-    MySQL.update('UPDATE player_vehicles SET mods = ? WHERE plate = ?', { json.encode(vehicleProps), plate })
+    if IsVehicleOwned(vehicleProps.plate) then
+        MySQL.update('UPDATE player_vehicles SET mods = ? WHERE plate = ?', { json.encode(vehicleProps), vehicleProps.plate })
+    end
 end)
 
 RegisterNetEvent('qb-mechanicjob:server:repairVehicleComponent', function(plate, component)
@@ -233,11 +239,19 @@ RegisterNetEvent('qb-mechanicjob:server:repairVehicleComponent', function(plate,
     end
 end)
 
+RegisterNetEvent('qb-mechanicjob:server:repairAllVehicleComponents', function(plate)
+    if not plate or not Config.UseWearableParts then return end
+    if not vehicleComponents[plate] then
+        vehicleComponents[plate] = {}
+    end
+    for component, data in pairs(Config.WearableParts) do
+        vehicleComponents[plate][component] = data.maxValue
+    end
+    local isOwned = IsVehicleOwned(plate)
+    if isOwned then MySQL.update('UPDATE player_vehicles SET status = ? WHERE plate = ?', { json.encode(vehicleComponents[plate]), plate }) end
+end)
+
 RegisterNetEvent('qb-mechanicjob:server:updateVehicleComponents', function(plate, componentData)
-    local src = source
-    local Player = exports['qb-core']:GetPlayer(src)
-    if not Player then return end
-    if not (IsVehicleOwnedBy(plate, Player.PlayerData.citizenid) or PlayerHasMechanicJob(src)) then return end
     if plate and componentData then
         vehicleComponents[plate] = componentData
     end

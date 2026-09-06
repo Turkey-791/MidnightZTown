@@ -1,4 +1,6 @@
 local Bail = {}
+-- Money Authority fix (2026-08-28): サーバー側で実際の配送完了数を追跡するためのテーブル(citizenid単位)
+local TruckerDropsCount = {}
 
 -- Functions
 
@@ -33,14 +35,15 @@ end
 
 local function deliveryPay(source, shop)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player then return end
+    if not Player then return false end
     local playerPed = GetPlayerPed(source)
     local playerCoords = GetEntityCoords(playerPed)
     local deliverCoords = Config.Locations[shop].delivery
     local distance = #(playerCoords - vector3(deliverCoords.x, deliverCoords.y, deliverCoords.z))
-    if distance > 10 then return end
+    if distance > 10 then return false end
     Player.AddMoney('bank', Config.DeliveryPrice, 'qb-shops:deliveryPay')
     if math.random(100) <= 10 then exports['qb-inventory']:AddItem(source, Config.RewardItem, 1, false, false, 'qb-shops:deliveryPay') end
+    return true
 end
 
 -- Events
@@ -51,7 +54,15 @@ RegisterNetEvent('qb-shops:server:RestockShopItems', function(shop)
     local src = source
     if not shop then return end
     if not Config.Locations[shop] then return end
-    deliveryPay(src, shop)
+    -- Money Authority fix (2026-08-28): deliveryPay()が実際に支払いを行った(=サーバー側の距離検証を通過した)
+    -- 場合のみ、PaySlip用の完了カウントを積み上げる。
+    if deliveryPay(src, shop) then
+        local Player = exports['qb-core']:GetPlayer(src)
+        if Player then
+            local citizenid = Player.PlayerData.citizenid
+            TruckerDropsCount[citizenid] = (TruckerDropsCount[citizenid] or 0) + 1
+        end
+    end
     if not Config.Locations[shop].useStock then return end
     local randAmount = math.random(10, 50)
     for k in pairs(Config.Locations[shop].products) do Config.Locations[shop].products[k].amount += randAmount end
@@ -104,12 +115,24 @@ RegisterNetEvent('qb-shops:server:PaySlip', function(drops)
     if distance > 10 then return end
     local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
-    local completedDrops = tonumber(drops)
-    if not drops then return end
+    -- Money Authority fix (2026-08-28): drops引数(クライアント申告値)は使用しない。
+    -- RestockShopItems時にサーバー側で積み上げたカウントのみを正とする。
+    local citizenid = Player.PlayerData.citizenid
+    local completedDrops = TruckerDropsCount[citizenid] or 0
+    if completedDrops <= 0 then return end
     local payment = Config.DeliveryPrice * completedDrops
     Player.AddMoney('bank', payment, 'trucker-salary')
     Player.AddRep('delivery', completedDrops)
     TriggerClientEvent('QBCore:Notify', src, Lang:t('success.you_earned', { value = payment }), 'success')
+    TruckerDropsCount[citizenid] = 0
+end)
+
+-- Money Authority fix (2026-08-28): ログアウト時にサーバー側カウントを破棄する。
+AddEventHandler('QBCore:Server:OnPlayerUnload', function(source)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if Player then
+        TruckerDropsCount[Player.PlayerData.citizenid] = nil
+    end
 end)
 
 -- Opening shops
@@ -122,6 +145,25 @@ RegisterNetEvent('qb-shops:server:openShop', function(data)
     local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
     local playerData = Player.PlayerData
+
+    -- 2026-09-02 Medical(Pillbox Hill)修正 再適用: shopData.requiredJob / requiredGang は
+    -- Config.Locations 側に既に定義済み(police/ambulance/mechanic/mechanic2/mechanic3/bennys/beeker)
+    -- だったが、この openShop ハンドラでは商品単位(curProduct.requiredJob)の判定しか行っておらず、
+    -- ショップ単位の職業制限がサーバー側で一切強制されていなかった(クライアント側UI表示のみ)。
+    -- これにより例えば救急ショップ(ambulance)がジョブ制限をバイパスして誰でも開けてしまう状態だった。
+    -- ここで shopData 単位の requiredJob / requiredGang を追加(既存の checkTable を再利用)して
+    -- サーバー側で強制するようにした。価格($0仕様含む)や商品単位の判定ロジックには一切手を加えていない。
+    -- (2026-09-01に一度適用済みだったが、Money Authority修正版への同期上書きで消失したため再適用。
+    --  今回のMoney Authority関連コード(TruckerDropsCount等)には一切触れていない。)
+    -- 元の内容は変更前バックアップ([_backup]/audit-fixes-2026-09-02/qb-shops/server/main.lua.orig)を参照。
+    if shopData.requiredJob and not checkTable(playerData.job.name, shopData.requiredJob) then
+        return
+    end
+
+    if shopData.requiredGang and not checkTable(playerData.gang.name, shopData.requiredGang) then
+        return
+    end
+
     local products = shopData.products
     local items = {}
 

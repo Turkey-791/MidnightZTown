@@ -70,8 +70,17 @@ end
 
 -- Callbacks
 
+-- 2026-09-01 Housing Garage修正: houselocations は退役済みqb-houses専用テーブルで、
+-- 現行のps-housing(properties テーブル/property_idキー)には存在しない。ps-housing公式の
+-- README - INSTALL INSTRUCTIONS/QBCore/README.md に記載された正式な移行手順に厳密に従い、
+-- properties テーブル(property_id基準)を参照するよう修正。
+-- 実運用上、この分岐(Config.Garages[formattedHouseName]が未登録の場合のフォールバック)は、
+-- ps-housing側のRegisterGarageZoneがガレージ登録時に必ず先にqb-garages:client:addHouseGarageを
+-- 同期発火してConfig.Garagesを埋めるため、通常到達しない防御的コードと考えられるが、
+-- 修正前は存在しないテーブルへのクエリでエラー・nil参照クラッシュの危険があったため合わせて修正した。
+-- 元の内容は変更前バックアップ([_backup]/audit-fixes-2026-09-01/qb-garages/server.lua.orig)を参照。
 QBCore.Functions.CreateCallback('qb-garages:server:getHouseGarage', function(_, cb, house)
-    local houseInfo = MySQL.single.await('SELECT * FROM houselocations WHERE name = ?', { house })
+    local houseInfo = MySQL.single.await('SELECT * FROM properties WHERE property_id = ?', { house })
     cb(houseInfo)
 end)
 
@@ -122,28 +131,16 @@ end
 -- Backwards Compat
 
 -- Spawns a vehicle and returns its network ID and properties.
-QBCore.Functions.CreateCallback('qb-garages:server:spawnvehicle', function(source, cb, plate, _, coords)
-    local Player = exports['qb-core']:GetPlayer(source)
-    if not Player then
-        cb(nil, nil, nil)
-        return
-    end
-    local ownedVehicle = MySQL.single.await('SELECT vehicle, mods FROM player_vehicles WHERE plate = ? AND citizenid = ? LIMIT 1', { plate, Player.PlayerData.citizenid })
-    if not ownedVehicle then
-        cb(nil, nil, nil)
-        return
-    end
-    local vehType = sharedVehicles[ownedVehicle.vehicle] and sharedVehicles[ownedVehicle.vehicle].type or GetVehicleTypeByModel(ownedVehicle.vehicle)
-    local hash = type(ownedVehicle.vehicle) == 'number' and ownedVehicle.vehicle or type(ownedVehicle.vehicle) == 'string' and GetHashKey(ownedVehicle.vehicle) or nil
-    if not hash then
-        cb(nil, nil, nil)
-        return
-    end
+QBCore.Functions.CreateCallback('qb-garages:server:spawnvehicle', function(source, cb, plate, vehicle, coords)
+    local vehType = sharedVehicles[vehicle] and sharedVehicles[vehicle].type or GetVehicleTypeByModel(vehicle)
+    local hash = type(vehicle) == 'number' and vehicle or type(vehicle) == 'string' and GetHashKey(vehicle) or nil
+    if not vehicle then return end
     local veh = CreateVehicleServerSetter(hash, vehType, coords.x, coords.y, coords.z, coords.w)
     local netId = NetworkGetNetworkIdFromEntity(veh)
     SetVehicleNumberPlateText(veh, plate)
     local vehProps = {}
-    if ownedVehicle.mods then vehProps = json.decode(ownedVehicle.mods) end
+    local result = MySQL.rawExecute.await('SELECT mods FROM player_vehicles WHERE plate = ?', { plate })
+    if result and result[1] then vehProps = json.decode(result[1].mods) end
     OutsideVehicles[plate] = { netID = netId, entity = veh }
     cb(netId, vehProps, plate)
 end)
@@ -164,7 +161,14 @@ QBCore.Functions.CreateCallback('qb-garages:server:canDeposit', function(source,
         cb(false)
         return
     end
-    if type == 'house' and not exports['qb-houses']:hasKey(Player.PlayerData.license, Player.PlayerData.citizenid, Config.Garages[garage].houseName) then
+    -- 2026-09-01 Housing Garage修正: qb-houses は本サーバーでは稼働しておらず([_backup]に退避済み)、
+    -- exports['qb-houses']:hasKey(...) は毎回エラーとなり家ガレージへの車両預け入れが機能しない状態だった。
+    -- 現行構成(ps-housing → qb-garages)に合わせ、ps-housing公式README記載の正式な移行手順に厳密に従い、
+    -- ps-housing の citizenid ベースのアクセス判定(所有者 or has_access リスト)を行う
+    -- exports['ps-housing']:IsOwner(source, property_id) に置き換えた。判定ロジック自体は変更していない
+    -- (「鍵を持っているか」→「このプロパティへのアクセス権を持っているか」という表現の違いのみ)。
+    -- 元の内容は変更前バックアップ([_backup]/audit-fixes-2026-09-01/qb-garages/server.lua.orig)を参照。
+    if type == 'house' and not exports['ps-housing']:IsOwner(source, Config.Garages[garage].houseName) then
         cb(false)
         return
     end
@@ -234,8 +238,16 @@ end)
 
 -- House Garages
 
+-- 2026-09-03 BUG-01修正: 従来はクライアントが把握しているConfig.Garages全体(自分のhouse以外は知らない)で
+-- 毎回まるごと上書きしていたため、resource再起動直後に別プレイヤーの家ガレージがまだ登録されていない状態で
+-- 誰かがsyncすると、既存のhouseエントリが消えてしまっていた(BUG-01)。
+-- house種別のみをマージする方式に変更し、public/gang/job/depot(静的config由来、常に正しい)を保護する。
 RegisterNetEvent('qb-garages:server:syncGarage', function(updatedGarages)
-    Config.Garages = updatedGarages
+    for k, v in pairs(updatedGarages) do
+        if v.type == 'house' then
+            Config.Garages[k] = v
+        end
+    end
 end)
 
 --Call from qb-phone

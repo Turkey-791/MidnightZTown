@@ -3,7 +3,7 @@ local sharedItems = exports['qb-core']:GetShared('Items')
 
 -- Functions
 
-local function CraftItem(benchType, craftedItem, requiredItems, amountToCraft, xpEarned, xpType)
+local function CraftItem(craftedItem, requiredItems, amountToCraft, xpEarned, xpType)
     QBCore.Functions.TriggerCallback('crafting:getPlayerInventory', function(inventory)
         local hasAllMaterials = true
         for _, reqItem in pairs(requiredItems) do
@@ -34,7 +34,7 @@ local function CraftItem(benchType, craftedItem, requiredItems, amountToCraft, x
                         anim = 'fixing_a_player',
                         flags = 16,
                     }, {}, {}, function()
-                        TriggerServerEvent('qb-crafting:server:receiveItem', benchType, craftedItem, amountToCraft)
+                        TriggerServerEvent('qb-crafting:server:receiveItem', craftedItem, requiredItems, amountToCraft, xpEarned, xpType)
                     end)
                 else
                     -- Remove a random number of required materials from the player's inventory
@@ -54,7 +54,7 @@ local function CraftItem(benchType, craftedItem, requiredItems, amountToCraft, x
                     anim = 'fixing_a_player',
                     flags = 16,
                 }, {}, {}, function()
-                    TriggerServerEvent('qb-crafting:server:receiveItem', benchType, craftedItem, amountToCraft)
+                    TriggerServerEvent('qb-crafting:server:receiveItem', craftedItem, requiredItems, amountToCraft, xpEarned, xpType)
                 end)
             end
         else
@@ -63,7 +63,7 @@ local function CraftItem(benchType, craftedItem, requiredItems, amountToCraft, x
     end)
 end
 
-local function CraftAmount(benchType, craftedItem, requiredItems, xpGain, xpType)
+local function CraftAmount(craftedItem, requiredItems, xpGain, xpType)
     local dialog = exports['qb-input']:ShowInput({
         header = string.format(Lang:t('menus.entercraftAmount')),
         submitText = 'Confirm',
@@ -87,7 +87,7 @@ local function CraftAmount(benchType, craftedItem, requiredItems, xpGain, xpType
                     amount = reqItem.amount * amount
                 }
             end
-            CraftItem(benchType, craftedItem, multipliedItems, amount, xpGain, xpType)
+            CraftItem(craftedItem, multipliedItems, amount, xpGain, xpType)
         else
             QBCore.Functions.Notify(string.format(Lang:t('notifications.invalidAmount')), 'error')
         end
@@ -131,7 +131,7 @@ local function OpenCraftingMenu(benchType)
                     params = {
                         isAction = true,
                         event = function()
-                            CraftAmount(benchType, recipe.item, recipe.requiredItems, recipe.xpGain, xpType)
+                            CraftAmount(recipe.item, recipe.requiredItems, recipe.xpGain, xpType)
                         end,
                         args = {}
                     },

@@ -1,84 +1,75 @@
 local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
 local sharedItems = exports['qb-core']:GetShared('Items')
-local grapePickupState = {}
-local wineRewardState = {}
-local grapeJuiceRewardState = {}
-local grapePickupMaxDistance = 5.0
 
-local grapeLocations = {
-    vector3(-1875.41, 2100.37, 138.86),
-    vector3(-1908.69, 2107.48, 131.31),
-    vector3(-1866.04, 2112.64, 134.41),
-    vector3(-1907.76, 2125.35, 124.03),
-    vector3(-1850.31, 2142.95, 122.30),
-    vector3(-1888.22, 2164.51, 114.81),
-    vector3(-1835.52, 2180.59, 104.88),
-    vector3(-1891.98, 2208.35, 94.56),
-    vector3(-1720.37, 2182.03, 106.18),
-    vector3(-1808.52, 2173.14, 107.63),
-    vector3(-1784.22, 2222.80, 92.86),
-    vector3(-1889.13, 2250.05, 79.63),
-    vector3(-1861.16, 2254.32, 81.04),
-    vector3(-1886.75, 2272.45, 70.81),
-    vector3(-1845.49, 2274.63, 73.33),
-    vector3(-1687.28, 2195.76, 97.87),
-    vector3(-1741.18, 2173.22, 114.39),
-    vector3(-1743.17, 2141.11, 121.18),
-    vector3(-1813.84, 2089.57, 134.21),
-    vector3(-1698.71, 2150.65, 110.41),
-}
+-- [2026-09-03 追加] ワイン醸造の180秒待機をサーバー側でも検証するための
+-- 開始時刻記録テーブル(citizenid単位)。クライアント側のタイマー
+-- (client.lua の winetimer)はUI表示用として残すが、報酬・アイテム付与の
+-- 可否はこちらのサーバー側経過時間で判定する。
+local WineBrewStarted = {}
 
-local function playerHasVineyardJob(Player)
-    return Player and Player.PlayerData and Player.PlayerData.job and Player.PlayerData.job.name == 'vineyard'
-end
-
-local function playerIsNearGrapeLocation(src)
-    local ped = GetPlayerPed(src)
-    if ped == 0 then
-        return false
-    end
-
-    local playerCoords = GetEntityCoords(ped)
-    for i = 1, #grapeLocations do
-        if #(playerCoords - grapeLocations[i]) <= grapePickupMaxDistance then
-            return true
-        end
-    end
-    return false
-end
-
-RegisterNetEvent('qb-vineyard:server:getGrapes', function()
+-- ============================================================
+-- [2026-09-04 追加] ジョブ受注(入社) -- 建物入口(ドア)でのEキー受注
+--
+-- 遵守事項:
+--   - 距離はサーバー側でも検証する(クライアントのPolyZone判定だけに頼らない)
+--   - 既にvineyard jobの場合は何もしない(二重受注防止)
+-- ============================================================
+RegisterNetEvent('qb-vineyard:server:applyJob', function()
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)
-    if not playerHasVineyardJob(Player) then
-        return
-    end
-    if not playerIsNearGrapeLocation(src) then
+    if not Player then return end
+
+    if Player.PlayerData.job.name == 'vineyard' then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.already_employed'), 'error')
         return
     end
 
-    local now = GetGameTimer()
-    local lastPickup = grapePickupState[src] or 0
-    if now - lastPickup < 3000 then
+    local ped = GetPlayerPed(src)
+    local pcoords = GetEntityCoords(ped)
+    local doorCoords = Config.JobDoor.coords
+    if #(pcoords - doorCoords) > Config.JobDoor.radius then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.too_far_to_apply'), 'error')
         return
     end
-    grapePickupState[src] = now
 
+    Player.Functions.SetJob('vineyard', 0)
+    TriggerClientEvent('QBCore:Notify', src, Lang:t('success.job_applied'), 'success')
+end)
+
+RegisterNetEvent('qb-vineyard:server:getGrapes', function()
+    local Player = exports['qb-core']:GetPlayer(source)
+    -- [2026-09-03 追加] job認証(サーバー側)
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', source, Lang:t('error.invalid_job'), 'error')
+        end
+        return
+    end
     local amount = math.random(Config.GrapeAmount.min, Config.GrapeAmount.max)
-    exports['qb-inventory']:AddItem(src, 'grape', amount, false, false, 'qb-vineyard:server:getGrapes')
-    TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems['grape'], 'add')
+    exports['qb-inventory']:AddItem(source, 'grape', amount, false, false, 'qb-vineyard:server:getGrapes')
+    TriggerClientEvent('qb-inventory:client:ItemBox', source, sharedItems['grape'], 'add')
 end)
 
 QBCore.Functions.CreateCallback('qb-vineyard:server:loadIngredients', function(source, cb)
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)
+    -- [2026-09-03 追加] job認証(サーバー側)。callbackのため、既存の呼び出し元
+    -- (client.lua)が期待する戻り値(false)を返してから終了する。
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', source, Lang:t('error.invalid_job'), 'error')
+        end
+        cb(false)
+        return
+    end
     local grape = Player.GetItemByName('grapejuice')
     if Player.PlayerData.items ~= nil then
         if grape ~= nil then
             if grape.amount >= 23 then
                 exports['qb-inventory']:RemoveItem(src, 'grapejuice', 23, false, 'qb-vineyard:server:loadIngredients')
                 TriggerClientEvent('qb-inventory:client:ItemBox', source, sharedItems['grapejuice'], 'remove')
-                wineRewardState[src] = true
+                -- [2026-09-03 追加] ワイン醸造開始時刻をサーバー側で記録(180秒検証用)
+                WineBrewStarted[Player.PlayerData.citizenid] = os.time()
                 cb(true)
             else
                 TriggerClientEvent('QBCore:Notify', source, Lang:t('error.invalid_items'), 'error')
@@ -97,13 +88,20 @@ end)
 QBCore.Functions.CreateCallback('qb-vineyard:server:grapeJuice', function(source, cb)
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)
+    -- [2026-09-03 追加] job認証(サーバー側)
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', source, Lang:t('error.invalid_job'), 'error')
+        end
+        cb(false)
+        return
+    end
     local grape = Player.GetItemByName('grape')
     if Player.PlayerData.items ~= nil then
         if grape ~= nil then
             if grape.amount >= 16 then
                 exports['qb-inventory']:RemoveItem(src, 'grape', 16, false, 'qb-vineyard:server:grapeJuice')
                 TriggerClientEvent('qb-inventory:client:ItemBox', source, sharedItems['grape'], 'remove')
-                grapeJuiceRewardState[src] = true
                 cb(true)
             else
                 TriggerClientEvent('QBCore:Notify', source, Lang:t('error.invalid_items'), 'error')
@@ -120,15 +118,26 @@ QBCore.Functions.CreateCallback('qb-vineyard:server:grapeJuice', function(source
 end)
 
 RegisterNetEvent('qb-vineyard:server:receiveWine', function()
-    local src = source
+    local src = tonumber(source)
     local Player = exports['qb-core']:GetPlayer(src)
-    if not playerHasVineyardJob(Player) then
+    -- [2026-09-03 追加] job認証(サーバー側)
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', src, Lang:t('error.invalid_job'), 'error')
+        end
         return
     end
-    if not wineRewardState[src] then
+
+    -- [2026-09-03 追加] 180秒経過のサーバー側検証。クライアントの
+    -- winetimerは信用せず、loadIngredients時に記録した開始時刻からの
+    -- 実経過時間のみで判定する。
+    local citizenid = Player.PlayerData.citizenid
+    local startedAt = WineBrewStarted[citizenid]
+    if not startedAt or (os.time() - startedAt) < Config.wineTimer then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.wine_not_ready'), 'error')
         return
     end
-    wineRewardState[src] = nil
+    WineBrewStarted[citizenid] = nil
 
     local amount = math.random(Config.WineAmount.min, Config.WineAmount.max)
     exports['qb-inventory']:AddItem(src, 'wine', amount, false, false, 'qb-vineyard:server:receiveWine')
@@ -136,51 +145,76 @@ RegisterNetEvent('qb-vineyard:server:receiveWine', function()
 end)
 
 RegisterNetEvent('qb-vineyard:server:receiveGrapeJuice', function()
-    local src = source
+    local src = tonumber(source)
     local Player = exports['qb-core']:GetPlayer(src)
-    if not playerHasVineyardJob(Player) then
+    -- [2026-09-03 追加] job認証(サーバー側)
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', src, Lang:t('error.invalid_job'), 'error')
+        end
         return
     end
-    if not grapeJuiceRewardState[src] then
-        return
-    end
-    grapeJuiceRewardState[src] = nil
-
     local amount = math.random(Config.GrapeJuiceAmount.min, Config.GrapeJuiceAmount.max)
     exports['qb-inventory']:AddItem(src, 'grapejuice', amount, false, false, 'qb-vineyard:server:receiveGrapeJuice')
     TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems['grapejuice'], 'add')
 end)
 
-AddEventHandler('playerDropped', function()
-    local src = source
-    grapePickupState[src] = nil
-    wineRewardState[src] = nil
-    grapeJuiceRewardState[src] = nil
-end)
-
-RegisterNetEvent('qb-vineyard:server:sellItems', function()
+-- ============================================================
+-- [2026-09-03 追加] wine納品(換金)処理 -- 作業報酬システム
+--
+-- 遵守事項:
+--   - 報酬額は Config.WineSellPrice のみを参照する(数値を直書きしない)
+--   - 数量はサーバー側で実在庫を確認し、クライアントからは受け取らない
+--   - 固定単位(wine 1個)で処理する
+--   - RemoveItemの成功を確認してからAddMoneyする(先払い禁止)
+--   - job認証はサーバー側で行う
+--   - 作業報酬のため、on-duty時のみ実行可能とする
+-- ============================================================
+RegisterNetEvent('qb-vineyard:server:sellWine', function()
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)
-    if not Player then return end
-    if not Config.Sell or not Config.Sell.enabled then return end
-
-    local total = 0
-    local soldAny = false
-    for itemName, price in pairs(Config.Sell.prices or {}) do
-        local item = Player.GetItemByName(itemName)
-        if item and item.amount and item.amount > 0 then
-            exports['qb-inventory']:RemoveItem(src, itemName, item.amount, false, 'qb-vineyard:server:sellItems')
-            TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[itemName], 'remove')
-            total = total + (item.amount * price)
-            soldAny = true
+    if not Player or Player.PlayerData.job.name ~= 'vineyard' then
+        if Player then
+            TriggerClientEvent('QBCore:Notify', src, Lang:t('error.invalid_job'), 'error')
         end
-    end
-
-    if not soldAny then
-        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_items'), 'error')
         return
     end
 
-    Player.Functions.AddMoney('cash', total, 'qb-vineyard:sellItems')
-    TriggerClientEvent('QBCore:Notify', src, ('Sold goods for $%s'):format(total), 'success')
+    if not Player.PlayerData.job.onduty then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_on_duty'), 'error')
+        return
+    end
+
+    local ped = GetPlayerPed(src)
+    local pcoords = GetEntityCoords(ped)
+    local sellCoords = Config.Vineyard.wine.coords
+    if #(pcoords - sellCoords) > Config.WineSellRadius then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.too_far_to_sell'), 'error')
+        return
+    end
+
+    local wine = Player.Functions.GetItemByName('wine')
+    if not wine or wine.amount < 1 then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_wine'), 'error')
+        return
+    end
+
+    local removed = Player.Functions.RemoveItem('wine', 1, false, 'qb-vineyard:server:sellWine')
+    if not removed then
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_wine'), 'error')
+        return
+    end
+    TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems['wine'], 'remove')
+
+    Player.Functions.AddMoney('cash', Config.WineSellPrice, 'qb-vineyard:server:sellWine')
+    TriggerClientEvent('QBCore:Notify', src, Lang:t('success.wine_sold', { value = Config.WineSellPrice }), 'success')
+end)
+
+-- [2026-09-03 追加] ログアウト時に未完了のワイン醸造記録を破棄する
+-- (qb-towjob の TowDropoffCount クリア処理と同じ考え方)
+AddEventHandler('QBCore:Server:OnPlayerUnload', function(source)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if Player then
+        WineBrewStarted[Player.PlayerData.citizenid] = nil
+    end
 end)

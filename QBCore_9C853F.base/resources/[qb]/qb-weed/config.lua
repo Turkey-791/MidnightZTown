@@ -1,22 +1,22 @@
 QBWeed = {}
 
-QBWeed.Progress = { -- How much progress will be added to a healthy plant every GrowthTick
-    min = 1,        -- Changing this will change growth time progression. Example 1 to 50 will give 50 progression in the 9.6 min cycle.
-    max = 3,        -- See above, make sure max is more then min.
+QBWeed.Progress = { -- 健康な植物に GrowthTick ごとにどのくらいの進捗が追加されるか
+    min = 1,        -- これを変更すると、成長時間の進行が変わります。例：1から50にすると、9.6分のサイクルで50の進捗が得られます。
+    max = 3,        -- 上記を参照してください。最大値が最小値より大きいことを確認してください。
 }
 
-QBWeed.ShowStages = true -- Show the stages of the plants
-QBWeed.GrowthTick = 9.6  -- Amount of time (in mins) to increase plant growth & update health / nutrition (every second tick)
-QBWeed.FoodUsage = 1     -- Amount of food to use per-tick
+QBWeed.ShowStages = true -- 植物の段階を表示
+QBWeed.GrowthTick = 9.6  -- 植物の成長を促進し、健康/栄養を更新する時間（分）（2番目のティックごと）
+QBWeed.FoodUsage = 1     -- 1ティックあたりの食料消費量
 
 QBWeed.StageLabels = {
-    [1] = 'Germination',
-    [2] = 'Seedling',
-    [3] = 'Vegetative',
-    [4] = 'Budding',
-    [5] = 'Pre-flowering',
-    [6] = 'Flowering',
-    [7] = 'Ready for harvest',
+    [1] = '発芽',
+    [2] = '苗',
+    [3] = '栄養成長',
+    [4] = 'つぼみ',
+    [5] = '開花前',
+    [6] = '開花',
+    [7] = '収穫準備完了',
 }
 
 QBWeed.DefaultProps = {
@@ -31,19 +31,19 @@ QBWeed.DefaultProps = {
 
 QBWeed.Plants = {
     ogkush = {
-        label = 'OGKush 2g',
+        label = 'OGクッシュ 2g',
         item = 'weed_ogkush',
         stages = QBWeed.DefaultProps,
         highestStage = 7,
     },
     amnesia = {
-        label = 'Amnesia 2g',
+        label = 'アムネシア 2g',
         item = 'weed_amnesia',
         stages = QBWeed.DefaultProps,
         highestStage = 7,
     },
     skunk = {
-        label = 'Skunk 2g',
+        label = 'スカンク 2g',
         item = 'weed_skunk',
         stages = QBWeed.DefaultProps,
         highestStage = 7,
@@ -55,13 +55,13 @@ QBWeed.Plants = {
         highestStage = 7,
     },
     purplehaze = {
-        label = 'Purple Haze 2g',
+        label = 'パープルヘイズ 2g',
         item = 'weed_purplehaze',
         stages = QBWeed.DefaultProps,
         highestStage = 7,
     },
     whitewidow = {
-        label = 'White Widow 2g',
+        label = 'ホワイトウィドウ 2g',
         item = 'weed_whitewidow',
         stages = QBWeed.DefaultProps,
         highestStage = 7,

@@ -10,11 +10,11 @@
             <audio id="sounds"><source type="audio/ogg"></audio>
             <div id="doorlock-container" :class="doorlockClassObject" :style="doorlockStyleObject">{{ doorText }}</div>
             <div class="textInfo">
-                <p id="aim" style="display: none;">Aim at your desired door.<br>Press the left mouse button to confirm the selected door</p>
+                <p id="aim" style="display: none;">目的のドアを狙ってください。<br>左クリックで選択したドアを確定します</p>
                 <div id="textDetails" style="display: none;">
-                    <p id="coords">Coordinates: {{ coords }}</p>
-                    <p id="heading">Heading: {{ heading }}</p>
-                    <p id="hash">Hash: {{ hash }}</p>
+                    <p id="coords">座標: {{ coords }}</p>
+                    <p id="heading">方角: {{ heading }}</p>
+                    <p id="hash">ハッシュ: {{ hash }}</p>
                 </div>
             </div>
         </div>

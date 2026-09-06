@@ -1,19 +1,19 @@
 Config = Config or {}
 
-Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add `setr UseTarget true` to use this and just that from true to false or the other way around)
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- qb-targetのインタラクションを使用 (変更しないでください。server.cfgに`setr UseTarget true`を追加して、この値をtrueからfalse、またはその逆に変更してください)
 
-Config.AvailableJobs = {                                     -- Only used when not using qb-jobs.
-    ['trucker'] = { ['label'] = 'Trucker', ['isManaged'] = false },
-    ['taxi'] = { ['label'] = 'Taxi', ['isManaged'] = false },
-    ['tow'] = { ['label'] = 'Tow Truck', ['isManaged'] = false },
-    ['reporter'] = { ['label'] = 'News Reporter', ['isManaged'] = false },
-    ['garbage'] = { ['label'] = 'Garbage Collector', ['isManaged'] = false },
-    ['bus'] = { ['label'] = 'Bus Driver', ['isManaged'] = false },
-    ['hotdog'] = { ['label'] = 'Hot Dog Stand', ['isManaged'] = false }
+Config.AvailableJobs = {                                     -- qb-jobsを使用しない場合にのみ使用
+    ['trucker'] = { ['label'] = 'トラック運転手', ['isManaged'] = false },
+    ['taxi'] = { ['label'] = 'タクシー', ['isManaged'] = false },
+    ['tow'] = { ['label'] = 'レッカー車', ['isManaged'] = false },
+    ['reporter'] = { ['label'] = 'ニュースレポーター', ['isManaged'] = false },
+    ['garbage'] = { ['label'] = 'ゴミ収集員', ['isManaged'] = false },
+    ['bus'] = { ['label'] = 'バス運転手', ['isManaged'] = false },
+    ['hotdog'] = { ['label'] = 'ホットドッグスタンド', ['isManaged'] = false }
 }
 
 Config.Cityhalls = {
-    { -- Cityhall 1
+    { -- 市役所 1
         coords = vec3(-265.0, -963.6, 31.2),
         showBlip = true,
         blipData = {
@@ -21,20 +21,20 @@ Config.Cityhalls = {
             display = 4,
             scale = 0.65,
             colour = 0,
-            title = 'City Services'
+            title = '市役所サービス'
         },
         licenses = {
             ['id_card'] = {
-                label = 'ID Card',
+                label = 'IDカード',
                 cost = 50,
             },
             ['driver_license'] = {
-                label = 'Driver License',
+                label = '運転免許証',
                 cost = 50,
                 metadata = 'driver'
             },
             ['weaponlicense'] = {
-                label = 'Weapon License',
+                label = '武器ライセンス',
                 cost = 50,
                 metadata = 'weapon'
             },
@@ -43,7 +43,7 @@ Config.Cityhalls = {
 }
 
 Config.DrivingSchools = {
-    { -- Driving School 1
+    { -- 自動車学校 1
         coords = vec3(240.3, -1379.89, 33.74),
         showBlip = true,
         blipData = {
@@ -51,7 +51,7 @@ Config.DrivingSchools = {
             display = 4,
             scale = 0.65,
             colour = 3,
-            title = 'Driving School'
+            title = '自動車学校'
         },
         instructors = {
             'DJD56142',
@@ -62,25 +62,25 @@ Config.DrivingSchools = {
 }
 
 Config.Peds = {
-    -- Cityhall Ped
+    -- 市庁舎のPED (NPC)
     {
         model = 'a_m_m_hasjew_01',
         coords = vec4(-262.79, -964.18, 30.22, 181.71),
         scenario = 'WORLD_HUMAN_STAND_MOBILE',
         cityhall = true,
-        zoneOptions = { -- Used for when UseTarget is false
+        zoneOptions = { -- UseTargetがfalseの場合に使用
             length = 3.0,
             width = 3.0,
             debugPoly = false
         }
     },
-    -- Driving School Ped
+    -- 自動車学校のPED (NPC)
     {
         model = 'a_m_m_eastsa_02',
         coords = vec4(240.91, -1379.2, 32.74, 138.96),
         scenario = 'WORLD_HUMAN_STAND_MOBILE',
         drivingschool = true,
-        zoneOptions = { -- Used for when UseTarget is false
+        zoneOptions = { -- UseTargetがfalseの場合に使用
             length = 3.0,
             width = 3.0
         }

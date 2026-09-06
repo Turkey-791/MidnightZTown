@@ -136,21 +136,15 @@ local function comma_value(amount)
 end
 
 local function getVehName()
-    local chosen = Config.Shops[insideShop] and Config.Shops[insideShop]['ShowroomVehicles'] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle
-    local veh = chosen and sharedVehicles[chosen]
-    return veh and veh['name'] or tostring(chosen or "Unknown")
+    return sharedVehicles[Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle]['name']
 end
 
 local function getVehPrice()
-    local chosen = Config.Shops[insideShop] and Config.Shops[insideShop]['ShowroomVehicles'] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle
-    local veh = chosen and sharedVehicles[chosen]
-    return veh and comma_value(veh['price']) or "0"
+    return comma_value(sharedVehicles[Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle]['price'])
 end
 
 local function getVehBrand()
-    local chosen = Config.Shops[insideShop] and Config.Shops[insideShop]['ShowroomVehicles'] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle] and Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle
-    local veh = chosen and sharedVehicles[chosen]
-    return veh and veh['brand'] or ""
+    return sharedVehicles[Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle]['brand']
 end
 
 local function setClosestShowroomVehicle()
@@ -426,63 +420,6 @@ end
 
 function Init()
     Initialized = true
-
-    -- Filter out deleted/invalid showroom vehicles before spawning them
-    local currentVehicles = exports['qb-core']:GetShared('Vehicles') or sharedVehicles
-    if currentVehicles and next(currentVehicles) then
-        for shopName, shop in pairs(Config.Shops) do
-            if shop['ShowroomVehicles'] then
-                for i = 1, #shop['ShowroomVehicles'] do
-                    local defaultModel = shop['ShowroomVehicles'][i].defaultVehicle
-                    local chosenModel = shop['ShowroomVehicles'][i].chosenVehicle
-                    
-                    local defaultInvalid = not defaultModel or not currentVehicles[defaultModel] or not next(currentVehicles[defaultModel])
-                    local chosenInvalid = not chosenModel or not currentVehicles[chosenModel] or not next(currentVehicles[chosenModel])
-                    
-                    if defaultInvalid or chosenInvalid then
-                        local replacement = nil
-                        local fallbackPool = {}
-                        
-                        for model, vehicle in pairs(currentVehicles) do
-                            local shops = type(vehicle.shop) == 'table' and vehicle.shop or { vehicle.shop }
-                            local belongsToShop = false
-                            for _, sName in ipairs(shops) do
-                                if sName == shopName then
-                                    belongsToShop = true
-                                    break
-                                end
-                            end
-                            if belongsToShop then
-                                table.insert(fallbackPool, model)
-                            end
-                        end
-                        
-                        if #fallbackPool > 0 then
-                            replacement = fallbackPool[math.random(1, #fallbackPool)]
-                        else
-                            local genericPool = {}
-                            for model in pairs(currentVehicles) do
-                                table.insert(genericPool, model)
-                            end
-                            if #genericPool > 0 then
-                                replacement = genericPool[math.random(1, #genericPool)]
-                            end
-                        end
-                        
-                        if replacement then
-                            if defaultInvalid then
-                                shop['ShowroomVehicles'][i].defaultVehicle = replacement
-                            end
-                            if chosenInvalid then
-                                shop['ShowroomVehicles'][i].chosenVehicle = replacement
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-
     CreateThread(function()
         for name, shop in pairs(Config.Shops) do
             if shop['Type'] == 'free-use' then
@@ -858,7 +795,7 @@ RegisterNetEvent('qb-vehicleshop:client:getVehicles', function()
         local ownedVehicles = {}
         for _, v in pairs(vehicles) do
             local vehData = sharedVehicles[v.vehicle]
-            if vehData and v.balance ~= 0 and vehData.shop == insideShop then
+            if v.balance ~= 0 and vehData.shop == insideShop then
                 local plate = v.plate:upper()
                 ownedVehicles[#ownedVehicles + 1] = {
                     header = vehData.name,
@@ -958,12 +895,8 @@ RegisterNetEvent('qb-vehicleshop:client:financePayment', function(data)
 end)
 
 RegisterNetEvent('qb-vehicleshop:client:openIdMenu', function(data)
-    local header = data.vehicle
-    if sharedVehicles[data.vehicle] then
-        header = sharedVehicles[data.vehicle]['name']
-    end
     local dialog = exports['qb-input']:ShowInput({
-        header = header,
+        header = sharedVehicles[data.vehicle]['name'],
         submitText = Lang:t('menus.submit_text'),
         inputs = {
             {
@@ -997,26 +930,6 @@ CreateThread(function()
             BeginTextCommandSetBlipName('STRING')
             AddTextComponentSubstringPlayerName(Config.Shops[k]['ShopLabel'])
             EndTextCommandSetBlipName(Dealer)
-        end
-    end
-end)
-
--- Update the showroom physically when a vehicle is dynamically removed
-RegisterNetEvent('qb-vehicleshop:client:ReplaceDeletedVehicle', function(shopName, deletedModel, replacement)
-    if not Config.Shops[shopName] then return end
-    
-    for i, vehData in ipairs(Config.Shops[shopName]['ShowroomVehicles']) do
-        if vehData.defaultVehicle == deletedModel then
-            vehData.defaultVehicle = replacement
-        end
-        
-        if vehData.chosenVehicle == deletedModel then
-            local swapData = {
-                ClosestShop = shopName,
-                ClosestVehicle = i,
-                toVehicle = replacement
-            }
-            TriggerEvent('qb-vehicleshop:client:swapVehicle', swapData)
         end
     end
 end)

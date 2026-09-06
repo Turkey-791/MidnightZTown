@@ -1,0 +1,408 @@
+./server.lua:34:RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
+./server.lua:40:    if #(playerCoords - Config.Registers[register][1].xyz) > 3.0 or (not Config.Registers[register].robbed and not isDone) or (Config.Registers[register].time <= 0 and not isDone) then
+./server.lua:51:            local code = SafeCodes[Config.Registers[register].safeKey]
+./server.lua:52:            if Config.Safes[Config.Registers[register].safeKey].type == 'keypad' then
+./server.lua:71:RegisterNetEvent('qb-storerobbery:server:setRegisterStatus', function(register)
+./server.lua:72:    Config.Registers[register].robbed = true
+./server.lua:73:    Config.Registers[register].time = Config.resetTime
+./server.lua:74:    TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
+./server.lua:77:RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
+./server.lua:87:RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
+./server.lua:115:RegisterNetEvent('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+./server.lua:120:        cameraId = Config.Registers[safe].camId
+./server.lua:128:    TriggerClientEvent('qb-phone:client:addPoliceAlert', -1, alertData)
+./server.lua:131:RegisterNetEvent('qb-storerobbery:server:removeAdvancedLockpick', function()
+./server.lua:137:RegisterNetEvent('qb-storerobbery:server:removeLockpick', function()
+./server.lua:146:        for k in ipairs(Config.Registers) do
+./server.lua:147:            if Config.Registers[k].time > 0 and (Config.Registers[k].time - Config.tickInterval) >= 0 then
+./server.lua:148:                Config.Registers[k].time = Config.Registers[k].time - Config.tickInterval
+./server.lua:150:                if Config.Registers[k].robbed then
+./server.lua:151:                    Config.Registers[k].time = 0
+./server.lua:152:                    Config.Registers[k].robbed = false
+./server.lua:153:                    toSend[#toSend + 1] = Config.Registers[k]
+./server.lua:160:            TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, toSend, false)
+./server.lua:175:QBCore.Functions.CreateCallback('qb-storerobbery:server:getRegisterStatus', function(_, cb)
+./server.lua:176:    cb(Config.Registers)
+./locales/pt-br.lua:3:        minimum_store_robbery_police = "Não há policiais suficientes (%{MinimumStoreRobberyPolice} necessários)",
+./locales/pt-br.lua:10:        the_cash_register_is_empty = "O caixa está vazio",
+./locales/pt-br.lua:13:        emptying_the_register= "Esvaziando o caixa...",
+./locales/ja.lua:10:        minimum_store_robbery_police = "警察官が足りません（%{MinimumStoreRobberyPolice}人必要）",
+./locales/ja.lua:17:        the_cash_register_is_empty = "レジは空です",
+./locales/ja.lua:20:        emptying_the_register= "レジを空にしています..",
+./locales/en.lua:3:        minimum_store_robbery_police = "Not Enough Police (%{MinimumStoreRobberyPolice} Required)",
+./locales/en.lua:10:        the_cash_register_is_empty = "The Cash Register Is Empty",
+./locales/en.lua:13:        emptying_the_register= "Emptying The Register..",
+./locales/es.lua:3:        minimum_store_robbery_police = "No hay suficientes policia (%{MinimumStoreRobberyPolice} son requeridos)",
+./locales/es.lua:10:        the_cash_register_is_empty = "La caja registradora está vacía",
+./locales/es.lua:13:        emptying_the_register= "Vaciando caja registradora..",
+./locales/fr.lua:3:        minimum_store_robbery_police = "Pas assez de policiers (%{MinimumStoreRobberyPolice} Requis)",
+./locales/fr.lua:9:        the_cash_register_is_empty = "La caisse est vide",
+./locales/fr.lua:12:        emptying_the_register= "Vide la caisse..",
+./locales/nl.lua:3:        minimum_store_robbery_police = "Er is niet genoeg politie, er zijn (%{MinimumStoreRobberyPolice} flikken nodig)",
+./locales/nl.lua:10:        the_cash_register_is_empty = "De kassa is leeg",
+./locales/nl.lua:13:        emptying_the_register= "Haalt alles leeg..",
+./config.lua:4:Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
+./config.lua:5:Config.MinimumStoreRobberyPolice = 0
+./config.lua:8:Config.stickyNoteChance = 10 -- Percent chance to get the safe code from a cash register
+./config.lua:10:Config.Registers = {
+./temp.txt:1:./server.lua:34:RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
+./temp.txt:2:./server.lua:40:    if #(playerCoords - Config.Registers[register][1].xyz) > 3.0 or (not Config.Registers[register].robbed and not isDone) or (Config.Registers[register].time <= 0 and not isDone) then
+./temp.txt:3:./server.lua:51:            local code = SafeCodes[Config.Registers[register].safeKey]
+./temp.txt:4:./server.lua:52:            if Config.Safes[Config.Registers[register].safeKey].type == 'keypad' then
+./temp.txt:5:./server.lua:71:RegisterNetEvent('qb-storerobbery:server:setRegisterStatus', function(register)
+./temp.txt:6:./server.lua:72:    Config.Registers[register].robbed = true
+./temp.txt:7:./server.lua:73:    Config.Registers[register].time = Config.resetTime
+./temp.txt:8:./server.lua:74:    TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
+./temp.txt:9:./server.lua:77:RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
+./temp.txt:10:./server.lua:87:RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
+./temp.txt:11:./server.lua:115:RegisterNetEvent('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+./temp.txt:12:./server.lua:120:        cameraId = Config.Registers[safe].camId
+./temp.txt:13:./server.lua:128:    TriggerClientEvent('qb-phone:client:addPoliceAlert', -1, alertData)
+./temp.txt:14:./server.lua:131:RegisterNetEvent('qb-storerobbery:server:removeAdvancedLockpick', function()
+./temp.txt:15:./server.lua:137:RegisterNetEvent('qb-storerobbery:server:removeLockpick', function()
+./temp.txt:16:./server.lua:146:        for k in ipairs(Config.Registers) do
+./temp.txt:17:./server.lua:147:            if Config.Registers[k].time > 0 and (Config.Registers[k].time - Config.tickInterval) >= 0 then
+./temp.txt:18:./server.lua:148:                Config.Registers[k].time = Config.Registers[k].time - Config.tickInterval
+./temp.txt:19:./server.lua:150:                if Config.Registers[k].robbed then
+./temp.txt:20:./server.lua:151:                    Config.Registers[k].time = 0
+./temp.txt:21:./server.lua:152:                    Config.Registers[k].robbed = false
+./temp.txt:22:./server.lua:153:                    toSend[#toSend + 1] = Config.Registers[k]
+./temp.txt:23:./server.lua:160:            TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, toSend, false)
+./temp.txt:24:./server.lua:175:QBCore.Functions.CreateCallback('qb-storerobbery:server:getRegisterStatus', function(_, cb)
+./temp.txt:25:./server.lua:176:    cb(Config.Registers)
+./temp.txt:26:./locales/pt-br.lua:3:        minimum_store_robbery_police = "Não há policiais suficientes (%{MinimumStoreRobberyPolice} necessários)",
+./temp.txt:27:./locales/pt-br.lua:10:        the_cash_register_is_empty = "O caixa está vazio",
+./temp.txt:28:./locales/pt-br.lua:13:        emptying_the_register= "Esvaziando o caixa...",
+./temp.txt:29:./locales/ja.lua:10:        minimum_store_robbery_police = "警察官が足りません（%{MinimumStoreRobberyPolice}人必要）",
+./temp.txt:30:./locales/ja.lua:17:        the_cash_register_is_empty = "レジは空です",
+./temp.txt:31:./locales/ja.lua:20:        emptying_the_register= "レジを空にしています..",
+./temp.txt:32:./locales/en.lua:3:        minimum_store_robbery_police = "Not Enough Police (%{MinimumStoreRobberyPolice} Required)",
+./temp.txt:33:./locales/en.lua:10:        the_cash_register_is_empty = "The Cash Register Is Empty",
+./temp.txt:34:./locales/en.lua:13:        emptying_the_register= "Emptying The Register..",
+./temp.txt:35:./locales/es.lua:3:        minimum_store_robbery_police = "No hay suficientes policia (%{MinimumStoreRobberyPolice} son requeridos)",
+./temp.txt:36:./locales/es.lua:10:        the_cash_register_is_empty = "La caja registradora está vacía",
+./temp.txt:37:./locales/es.lua:13:        emptying_the_register= "Vaciando caja registradora..",
+./temp.txt:38:./locales/fr.lua:3:        minimum_store_robbery_police = "Pas assez de policiers (%{MinimumStoreRobberyPolice} Requis)",
+./temp.txt:39:./locales/fr.lua:9:        the_cash_register_is_empty = "La caisse est vide",
+./temp.txt:40:./locales/fr.lua:12:        emptying_the_register= "Vide la caisse..",
+./temp.txt:41:./locales/nl.lua:3:        minimum_store_robbery_police = "Er is niet genoeg politie, er zijn (%{MinimumStoreRobberyPolice} flikken nodig)",
+./temp.txt:42:./locales/nl.lua:10:        the_cash_register_is_empty = "De kassa is leeg",
+./temp.txt:43:./locales/nl.lua:13:        emptying_the_register= "Haalt alles leeg..",
+./temp.txt:44:./config.lua:4:Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
+./temp.txt:45:./config.lua:5:Config.MinimumStoreRobberyPolice = 0
+./temp.txt:46:./config.lua:8:Config.stickyNoteChance = 10 -- Percent chance to get the safe code from a cash register
+./temp.txt:47:./config.lua:10:Config.Registers = {
+./temp.txt:48:./.github/ISSUE_TEMPLATE/bug_report.md:28: - Are you using custom resource? which ones? [e.g. zdiscord, qb-target]
+./temp.txt:49:./.github/workflows/lint.yml:2:on: [push, pull_request_target]
+./temp.txt:50:./client.lua:3:local currentRegister = 0
+./temp.txt:51:./client.lua:29:    setupRegister()
+./temp.txt:52:./client.lua:35:        for k in pairs(Config.Registers) do
+./temp.txt:53:./client.lua:36:            local dist = #(pos - Config.Registers[k][1].xyz)
+./temp.txt:54:./client.lua:37:            if dist <= 1 and Config.Registers[k].robbed then
+./temp.txt:55:./client.lua:39:                DrawText3Ds(Config.Registers[k][1].xyz, Lang:t('text.the_cash_register_is_empty'))
+./temp.txt:56:./client.lua:63:                                if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./temp.txt:57:./client.lua:78:                                            TriggerEvent('SafeCracker:StartMinigame', combination)
+./temp.txt:58:./client.lua:95:                                    QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./temp.txt:59:./client.lua:112:RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+./temp.txt:60:./client.lua:117:RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+./temp.txt:61:./client.lua:121:RegisterNetEvent('QBCore:Client:OnPlayerUpdated', function(key, val)
+./temp.txt:62:./client.lua:133:RegisterNetEvent('police:SetCopCount', function(amount)
+./temp.txt:63:./client.lua:137:RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
+./temp.txt:64:./client.lua:139:    for k in pairs(Config.Registers) do
+./temp.txt:65:./client.lua:142:        local dist = #(pos - Config.Registers[k][1].xyz)
+./temp.txt:66:./client.lua:143:        if dist <= 1 and not Config.Registers[k].robbed then
+./temp.txt:67:./client.lua:144:            if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./temp.txt:68:./client.lua:147:                    currentRegister = k
+./temp.txt:69:./client.lua:159:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./temp.txt:70:./client.lua:164:                    currentRegister = k
+./temp.txt:71:./client.lua:176:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./temp.txt:72:./client.lua:181:                QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./temp.txt:73:./client.lua:187:function setupRegister()
+./temp.txt:74:./client.lua:188:    QBCore.Functions.TriggerCallback('qb-storerobbery:server:getRegisterStatus', function(Registers)
+./temp.txt:75:./client.lua:189:        for k in pairs(Registers) do
+./temp.txt:76:./client.lua:190:            Config.Registers[k].robbed = Registers[k].robbed
+./temp.txt:77:./client.lua:247:RegisterNUICallback('success', function(_, cb)
+./temp.txt:78:./client.lua:248:    if currentRegister ~= 0 then
+./temp.txt:79:./client.lua:250:        TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
+./temp.txt:80:./client.lua:253:        QBCore.Functions.Progressbar('search_register', Lang:t('text.emptying_the_register'), lockpickTime, false, true, {
+./temp.txt:81:./client.lua:265:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)
+./temp.txt:82:./client.lua:270:            currentRegister = 0
+./temp.txt:83:./client.lua:296:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, false)
+./temp.txt:84:./client.lua:302:        currentRegister = 0
+./temp.txt:85:./client.lua:306:RegisterNUICallback('callcops', function(_, cb)
+./temp.txt:86:./client.lua:307:    TriggerEvent('police:SetCopAlert')
+./temp.txt:87:./client.lua:311:RegisterNetEvent('SafeCracker:EndMinigame', function(won)
+./temp.txt:88:./client.lua:332:RegisterNUICallback('PadLockSuccess', function(_, cb)
+./temp.txt:89:./client.lua:347:RegisterNUICallback('PadLockClose', function(_, cb)
+./temp.txt:90:./client.lua:353:RegisterNUICallback('CombinationFail', function(_, cb)
+./temp.txt:91:./client.lua:358:RegisterNUICallback('fail', function(_, cb)
+./temp.txt:92:./client.lua:379:RegisterNUICallback('exit', function(_, cb)
+./temp.txt:93:./client.lua:384:RegisterNUICallback('TryCombination', function(data, cb)
+./temp.txt:94:./client.lua:398:                TriggerEvent('police:SetCopAlert')
+./temp.txt:95:./client.lua:411:RegisterNetEvent('qb-storerobbery:client:setRegisterStatus', function(batch, val)
+./temp.txt:96:./client.lua:412:    -- Has to be a better way maybe like adding a unique id to identify the register
+./temp.txt:97:./client.lua:414:        Config.Registers[batch] = val
+./temp.txt:98:./client.lua:417:            Config.Registers[k] = batch[k]
+./temp.txt:99:./client.lua:422:RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
+./temp.txt:100:./client.lua:426:RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords)
+./temp.txt:101:./client.lua:427:    if (PlayerJob.name == 'police' or PlayerJob.type == 'leo') and onDuty then
+./temp.txt:102:./client.lua:429:        TriggerServerEvent('police:server:policeAlert', Lang:t('email.storerobbery_progress'))
+./.github/ISSUE_TEMPLATE/bug_report.md:28: - Are you using custom resource? which ones? [e.g. zdiscord, qb-target]
+./.github/workflows/lint.yml:2:on: [push, pull_request_target]
+./client.lua:3:local currentRegister = 0
+./client.lua:29:    setupRegister()
+./client.lua:35:        for k in pairs(Config.Registers) do
+./client.lua:36:            local dist = #(pos - Config.Registers[k][1].xyz)
+./client.lua:37:            if dist <= 1 and Config.Registers[k].robbed then
+./client.lua:39:                DrawText3Ds(Config.Registers[k][1].xyz, Lang:t('text.the_cash_register_is_empty'))
+./client.lua:63:                                if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./client.lua:78:                                            TriggerEvent('SafeCracker:StartMinigame', combination)
+./client.lua:95:                                    QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./client.lua:112:RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+./client.lua:117:RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+./client.lua:121:RegisterNetEvent('QBCore:Client:OnPlayerUpdated', function(key, val)
+./client.lua:133:RegisterNetEvent('police:SetCopCount', function(amount)
+./client.lua:137:RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
+./client.lua:139:    for k in pairs(Config.Registers) do
+./client.lua:142:        local dist = #(pos - Config.Registers[k][1].xyz)
+./client.lua:143:        if dist <= 1 and not Config.Registers[k].robbed then
+./client.lua:144:            if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./client.lua:147:                    currentRegister = k
+./client.lua:159:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./client.lua:164:                    currentRegister = k
+./client.lua:176:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./client.lua:181:                QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./client.lua:187:function setupRegister()
+./client.lua:188:    QBCore.Functions.TriggerCallback('qb-storerobbery:server:getRegisterStatus', function(Registers)
+./client.lua:189:        for k in pairs(Registers) do
+./client.lua:190:            Config.Registers[k].robbed = Registers[k].robbed
+./client.lua:247:RegisterNUICallback('success', function(_, cb)
+./client.lua:248:    if currentRegister ~= 0 then
+./client.lua:250:        TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
+./client.lua:253:        QBCore.Functions.Progressbar('search_register', Lang:t('text.emptying_the_register'), lockpickTime, false, true, {
+./client.lua:265:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)
+./client.lua:270:            currentRegister = 0
+./client.lua:296:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, false)
+./client.lua:302:        currentRegister = 0
+./client.lua:306:RegisterNUICallback('callcops', function(_, cb)
+./client.lua:307:    TriggerEvent('police:SetCopAlert')
+./client.lua:311:RegisterNetEvent('SafeCracker:EndMinigame', function(won)
+./client.lua:332:RegisterNUICallback('PadLockSuccess', function(_, cb)
+./client.lua:347:RegisterNUICallback('PadLockClose', function(_, cb)
+./client.lua:353:RegisterNUICallback('CombinationFail', function(_, cb)
+./client.lua:358:RegisterNUICallback('fail', function(_, cb)
+./client.lua:379:RegisterNUICallback('exit', function(_, cb)
+./client.lua:384:RegisterNUICallback('TryCombination', function(data, cb)
+./client.lua:398:                TriggerEvent('police:SetCopAlert')
+./client.lua:411:RegisterNetEvent('qb-storerobbery:client:setRegisterStatus', function(batch, val)
+./client.lua:412:    -- Has to be a better way maybe like adding a unique id to identify the register
+./client.lua:414:        Config.Registers[batch] = val
+./client.lua:417:            Config.Registers[k] = batch[k]
+./client.lua:422:RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
+./client.lua:426:RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords)
+./client.lua:427:    if (PlayerJob.name == 'police' or PlayerJob.type == 'leo') and onDuty then
+./client.lua:429:        TriggerServerEvent('police:server:policeAlert', Lang:t('email.storerobbery_progress'))
+./server.lua:34:RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
+./server.lua:40:    if #(playerCoords - Config.Registers[register][1].xyz) > 3.0 or (not Config.Registers[register].robbed and not isDone) or (Config.Registers[register].time <= 0 and not isDone) then
+./server.lua:51:            local code = SafeCodes[Config.Registers[register].safeKey]
+./server.lua:52:            if Config.Safes[Config.Registers[register].safeKey].type == 'keypad' then
+./server.lua:71:RegisterNetEvent('qb-storerobbery:server:setRegisterStatus', function(register)
+./server.lua:72:    Config.Registers[register].robbed = true
+./server.lua:73:    Config.Registers[register].time = Config.resetTime
+./server.lua:74:    TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
+./server.lua:77:RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
+./server.lua:87:RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
+./server.lua:115:RegisterNetEvent('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+./server.lua:120:        cameraId = Config.Registers[safe].camId
+./server.lua:128:    TriggerClientEvent('qb-phone:client:addPoliceAlert', -1, alertData)
+./server.lua:131:RegisterNetEvent('qb-storerobbery:server:removeAdvancedLockpick', function()
+./server.lua:137:RegisterNetEvent('qb-storerobbery:server:removeLockpick', function()
+./server.lua:146:        for k in ipairs(Config.Registers) do
+./server.lua:147:            if Config.Registers[k].time > 0 and (Config.Registers[k].time - Config.tickInterval) >= 0 then
+./server.lua:148:                Config.Registers[k].time = Config.Registers[k].time - Config.tickInterval
+./server.lua:150:                if Config.Registers[k].robbed then
+./server.lua:151:                    Config.Registers[k].time = 0
+./server.lua:152:                    Config.Registers[k].robbed = false
+./server.lua:153:                    toSend[#toSend + 1] = Config.Registers[k]
+./server.lua:160:            TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, toSend, false)
+./server.lua:175:QBCore.Functions.CreateCallback('qb-storerobbery:server:getRegisterStatus', function(_, cb)
+./server.lua:176:    cb(Config.Registers)
+./locales/pt-br.lua:3:        minimum_store_robbery_police = "Não há policiais suficientes (%{MinimumStoreRobberyPolice} necessários)",
+./locales/pt-br.lua:10:        the_cash_register_is_empty = "O caixa está vazio",
+./locales/pt-br.lua:13:        emptying_the_register= "Esvaziando o caixa...",
+./locales/ja.lua:10:        minimum_store_robbery_police = "警察官が足りません（%{MinimumStoreRobberyPolice}人必要）",
+./locales/ja.lua:17:        the_cash_register_is_empty = "レジは空です",
+./locales/ja.lua:20:        emptying_the_register= "レジを空にしています..",
+./locales/en.lua:3:        minimum_store_robbery_police = "Not Enough Police (%{MinimumStoreRobberyPolice} Required)",
+./locales/en.lua:10:        the_cash_register_is_empty = "The Cash Register Is Empty",
+./locales/en.lua:13:        emptying_the_register= "Emptying The Register..",
+./locales/es.lua:3:        minimum_store_robbery_police = "No hay suficientes policia (%{MinimumStoreRobberyPolice} son requeridos)",
+./locales/es.lua:10:        the_cash_register_is_empty = "La caja registradora está vacía",
+./locales/es.lua:13:        emptying_the_register= "Vaciando caja registradora..",
+./locales/fr.lua:3:        minimum_store_robbery_police = "Pas assez de policiers (%{MinimumStoreRobberyPolice} Requis)",
+./locales/fr.lua:9:        the_cash_register_is_empty = "La caisse est vide",
+./locales/fr.lua:12:        emptying_the_register= "Vide la caisse..",
+./locales/nl.lua:3:        minimum_store_robbery_police = "Er is niet genoeg politie, er zijn (%{MinimumStoreRobberyPolice} flikken nodig)",
+./locales/nl.lua:10:        the_cash_register_is_empty = "De kassa is leeg",
+./locales/nl.lua:13:        emptying_the_register= "Haalt alles leeg..",
+./config.lua:4:Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
+./config.lua:5:Config.MinimumStoreRobberyPolice = 0
+./config.lua:8:Config.stickyNoteChance = 10 -- Percent chance to get the safe code from a cash register
+./config.lua:10:Config.Registers = {
+./temp.txt:1:./server.lua:34:RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
+./temp.txt:2:./server.lua:40:    if #(playerCoords - Config.Registers[register][1].xyz) > 3.0 or (not Config.Registers[register].robbed and not isDone) or (Config.Registers[register].time <= 0 and not isDone) then
+./temp.txt:3:./server.lua:51:            local code = SafeCodes[Config.Registers[register].safeKey]
+./temp.txt:4:./server.lua:52:            if Config.Safes[Config.Registers[register].safeKey].type == 'keypad' then
+./temp.txt:5:./server.lua:71:RegisterNetEvent('qb-storerobbery:server:setRegisterStatus', function(register)
+./temp.txt:6:./server.lua:72:    Config.Registers[register].robbed = true
+./temp.txt:7:./server.lua:73:    Config.Registers[register].time = Config.resetTime
+./temp.txt:8:./server.lua:74:    TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
+./temp.txt:9:./server.lua:77:RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
+./temp.txt:10:./server.lua:87:RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
+./temp.txt:11:./server.lua:115:RegisterNetEvent('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+./temp.txt:12:./server.lua:120:        cameraId = Config.Registers[safe].camId
+./temp.txt:13:./server.lua:128:    TriggerClientEvent('qb-phone:client:addPoliceAlert', -1, alertData)
+./temp.txt:14:./server.lua:131:RegisterNetEvent('qb-storerobbery:server:removeAdvancedLockpick', function()
+./temp.txt:15:./server.lua:137:RegisterNetEvent('qb-storerobbery:server:removeLockpick', function()
+./temp.txt:16:./server.lua:146:        for k in ipairs(Config.Registers) do
+./temp.txt:17:./server.lua:147:            if Config.Registers[k].time > 0 and (Config.Registers[k].time - Config.tickInterval) >= 0 then
+./temp.txt:18:./server.lua:148:                Config.Registers[k].time = Config.Registers[k].time - Config.tickInterval
+./temp.txt:19:./server.lua:150:                if Config.Registers[k].robbed then
+./temp.txt:20:./server.lua:151:                    Config.Registers[k].time = 0
+./temp.txt:21:./server.lua:152:                    Config.Registers[k].robbed = false
+./temp.txt:22:./server.lua:153:                    toSend[#toSend + 1] = Config.Registers[k]
+./temp.txt:23:./server.lua:160:            TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, toSend, false)
+./temp.txt:24:./server.lua:175:QBCore.Functions.CreateCallback('qb-storerobbery:server:getRegisterStatus', function(_, cb)
+./temp.txt:25:./server.lua:176:    cb(Config.Registers)
+./temp.txt:26:./locales/pt-br.lua:3:        minimum_store_robbery_police = "Não há policiais suficientes (%{MinimumStoreRobberyPolice} necessários)",
+./temp.txt:27:./locales/pt-br.lua:10:        the_cash_register_is_empty = "O caixa está vazio",
+./temp.txt:28:./locales/pt-br.lua:13:        emptying_the_register= "Esvaziando o caixa...",
+./temp.txt:29:./locales/ja.lua:10:        minimum_store_robbery_police = "警察官が足りません（%{MinimumStoreRobberyPolice}人必要）",
+./temp.txt:30:./locales/ja.lua:17:        the_cash_register_is_empty = "レジは空です",
+./temp.txt:31:./locales/ja.lua:20:        emptying_the_register= "レジを空にしています..",
+./temp.txt:32:./locales/en.lua:3:        minimum_store_robbery_police = "Not Enough Police (%{MinimumStoreRobberyPolice} Required)",
+./temp.txt:33:./locales/en.lua:10:        the_cash_register_is_empty = "The Cash Register Is Empty",
+./temp.txt:34:./locales/en.lua:13:        emptying_the_register= "Emptying The Register..",
+./temp.txt:35:./locales/es.lua:3:        minimum_store_robbery_police = "No hay suficientes policia (%{MinimumStoreRobberyPolice} son requeridos)",
+./temp.txt:36:./locales/es.lua:10:        the_cash_register_is_empty = "La caja registradora está vacía",
+./temp.txt:37:./locales/es.lua:13:        emptying_the_register= "Vaciando caja registradora..",
+./temp.txt:38:./locales/fr.lua:3:        minimum_store_robbery_police = "Pas assez de policiers (%{MinimumStoreRobberyPolice} Requis)",
+./temp.txt:39:./locales/fr.lua:9:        the_cash_register_is_empty = "La caisse est vide",
+./temp.txt:40:./locales/fr.lua:12:        emptying_the_register= "Vide la caisse..",
+./temp.txt:41:./locales/nl.lua:3:        minimum_store_robbery_police = "Er is niet genoeg politie, er zijn (%{MinimumStoreRobberyPolice} flikken nodig)",
+./temp.txt:42:./locales/nl.lua:10:        the_cash_register_is_empty = "De kassa is leeg",
+./temp.txt:43:./locales/nl.lua:13:        emptying_the_register= "Haalt alles leeg..",
+./temp.txt:44:./config.lua:4:Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
+./temp.txt:45:./config.lua:5:Config.MinimumStoreRobberyPolice = 0
+./temp.txt:46:./config.lua:8:Config.stickyNoteChance = 10 -- Percent chance to get the safe code from a cash register
+./temp.txt:47:./config.lua:10:Config.Registers = {
+./temp.txt:48:./.github/ISSUE_TEMPLATE/bug_report.md:28: - Are you using custom resource? which ones? [e.g. zdiscord, qb-target]
+./temp.txt:49:./.github/workflows/lint.yml:2:on: [push, pull_request_target]
+./temp.txt:50:./client.lua:3:local currentRegister = 0
+./temp.txt:51:./client.lua:29:    setupRegister()
+./temp.txt:52:./client.lua:35:        for k in pairs(Config.Registers) do
+./temp.txt:53:./client.lua:36:            local dist = #(pos - Config.Registers[k][1].xyz)
+./temp.txt:54:./client.lua:37:            if dist <= 1 and Config.Registers[k].robbed then
+./temp.txt:55:./client.lua:39:                DrawText3Ds(Config.Registers[k][1].xyz, Lang:t('text.the_cash_register_is_empty'))
+./temp.txt:56:./client.lua:63:                                if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./temp.txt:57:./client.lua:78:                                            TriggerEvent('SafeCracker:StartMinigame', combination)
+./temp.txt:58:./client.lua:95:                                    QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./temp.txt:59:./client.lua:112:RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+./temp.txt:60:./client.lua:117:RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+./temp.txt:61:./client.lua:121:RegisterNetEvent('QBCore:Client:OnPlayerUpdated', function(key, val)
+./temp.txt:62:./client.lua:133:RegisterNetEvent('police:SetCopCount', function(amount)
+./temp.txt:63:./client.lua:137:RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
+./temp.txt:64:./client.lua:139:    for k in pairs(Config.Registers) do
+./temp.txt:65:./client.lua:142:        local dist = #(pos - Config.Registers[k][1].xyz)
+./temp.txt:66:./client.lua:143:        if dist <= 1 and not Config.Registers[k].robbed then
+./temp.txt:67:./client.lua:144:            if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./temp.txt:68:./client.lua:147:                    currentRegister = k
+./temp.txt:69:./client.lua:159:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./temp.txt:70:./client.lua:164:                    currentRegister = k
+./temp.txt:71:./client.lua:176:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./temp.txt:72:./client.lua:181:                QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./temp.txt:73:./client.lua:187:function setupRegister()
+./temp.txt:74:./client.lua:188:    QBCore.Functions.TriggerCallback('qb-storerobbery:server:getRegisterStatus', function(Registers)
+./temp.txt:75:./client.lua:189:        for k in pairs(Registers) do
+./temp.txt:76:./client.lua:190:            Config.Registers[k].robbed = Registers[k].robbed
+./temp.txt:77:./client.lua:247:RegisterNUICallback('success', function(_, cb)
+./temp.txt:78:./client.lua:248:    if currentRegister ~= 0 then
+./temp.txt:79:./client.lua:250:        TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
+./temp.txt:80:./client.lua:253:        QBCore.Functions.Progressbar('search_register', Lang:t('text.emptying_the_register'), lockpickTime, false, true, {
+./temp.txt:81:./client.lua:265:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)
+./temp.txt:82:./client.lua:270:            currentRegister = 0
+./temp.txt:83:./client.lua:296:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, false)
+./temp.txt:84:./client.lua:302:        currentRegister = 0
+./temp.txt:85:./client.lua:306:RegisterNUICallback('callcops', function(_, cb)
+./temp.txt:86:./client.lua:307:    TriggerEvent('police:SetCopAlert')
+./temp.txt:87:./client.lua:311:RegisterNetEvent('SafeCracker:EndMinigame', function(won)
+./temp.txt:88:./client.lua:332:RegisterNUICallback('PadLockSuccess', function(_, cb)
+./temp.txt:89:./client.lua:347:RegisterNUICallback('PadLockClose', function(_, cb)
+./temp.txt:90:./client.lua:353:RegisterNUICallback('CombinationFail', function(_, cb)
+./temp.txt:91:./client.lua:358:RegisterNUICallback('fail', function(_, cb)
+./temp.txt:92:./client.lua:379:RegisterNUICallback('exit', function(_, cb)
+./temp.txt:93:./client.lua:384:RegisterNUICallback('TryCombination', function(data, cb)
+./temp.txt:94:./client.lua:398:                TriggerEvent('police:SetCopAlert')
+./temp.txt:95:./client.lua:411:RegisterNetEvent('qb-storerobbery:client:setRegisterStatus', function(batch, val)
+./temp.txt:96:./client.lua:412:    -- Has to be a better way maybe like adding a unique id to identify the register
+./temp.txt:97:./client.lua:414:        Config.Registers[batch] = val
+./temp.txt:98:./client.lua:417:            Config.Registers[k] = batch[k]
+./temp.txt:99:./client.lua:422:RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
+./temp.txt:100:./client.lua:426:RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords)
+./temp.txt:101:./client.lua:427:    if (PlayerJob.name == 'police' or PlayerJob.type == 'leo') and onDuty then
+./temp.txt:102:./client.lua:429:        TriggerServerEvent('police:server:policeAlert', Lang:t('email.storerobbery_progress'))
+./.github/ISSUE_TEMPLATE/bug_report.md:28: - Are you using custom resource? which ones? [e.g. zdiscord, qb-target]
+./.github/workflows/lint.yml:2:on: [push, pull_request_target]
+./client.lua:3:local currentRegister = 0
+./client.lua:29:    setupRegister()
+./client.lua:35:        for k in pairs(Config.Registers) do
+./client.lua:36:            local dist = #(pos - Config.Registers[k][1].xyz)
+./client.lua:37:            if dist <= 1 and Config.Registers[k].robbed then
+./client.lua:39:                DrawText3Ds(Config.Registers[k][1].xyz, Lang:t('text.the_cash_register_is_empty'))
+./client.lua:63:                                if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./client.lua:78:                                            TriggerEvent('SafeCracker:StartMinigame', combination)
+./client.lua:95:                                    QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./client.lua:112:RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+./client.lua:117:RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+./client.lua:121:RegisterNetEvent('QBCore:Client:OnPlayerUpdated', function(key, val)
+./client.lua:133:RegisterNetEvent('police:SetCopCount', function(amount)
+./client.lua:137:RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
+./client.lua:139:    for k in pairs(Config.Registers) do
+./client.lua:142:        local dist = #(pos - Config.Registers[k][1].xyz)
+./client.lua:143:        if dist <= 1 and not Config.Registers[k].robbed then
+./client.lua:144:            if CurrentCops >= Config.MinimumStoreRobberyPolice then
+./client.lua:147:                    currentRegister = k
+./client.lua:159:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./client.lua:164:                    currentRegister = k
+./client.lua:176:                        TriggerServerEvent('qb-storerobbery:server:callCops', 'cashier', currentRegister, streetLabel, pos)
+./client.lua:181:                QBCore.Functions.Notify(Lang:t('error.minimum_store_robbery_police', { MinimumStoreRobberyPolice = Config.MinimumStoreRobberyPolice }), 'error')
+./client.lua:187:function setupRegister()
+./client.lua:188:    QBCore.Functions.TriggerCallback('qb-storerobbery:server:getRegisterStatus', function(Registers)
+./client.lua:189:        for k in pairs(Registers) do
+./client.lua:190:            Config.Registers[k].robbed = Registers[k].robbed
+./client.lua:247:RegisterNUICallback('success', function(_, cb)
+./client.lua:248:    if currentRegister ~= 0 then
+./client.lua:250:        TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
+./client.lua:253:        QBCore.Functions.Progressbar('search_register', Lang:t('text.emptying_the_register'), lockpickTime, false, true, {
+./client.lua:265:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)
+./client.lua:270:            currentRegister = 0
+./client.lua:296:            TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, false)
+./client.lua:302:        currentRegister = 0
+./client.lua:306:RegisterNUICallback('callcops', function(_, cb)
+./client.lua:307:    TriggerEvent('police:SetCopAlert')
+./client.lua:311:RegisterNetEvent('SafeCracker:EndMinigame', function(won)
+./client.lua:332:RegisterNUICallback('PadLockSuccess', function(_, cb)
+./client.lua:347:RegisterNUICallback('PadLockClose', function(_, cb)
+./client.lua:353:RegisterNUICallback('CombinationFail', function(_, cb)
+./client.lua:358:RegisterNUICallback('fail', function(_, cb)
+./client.lua:379:RegisterNUICallback('exit', function(_, cb)
+./client.lua:384:RegisterNUICallback('TryCombination', function(data, cb)
+./client.lua:398:                TriggerEvent('police:SetCopAlert')
+./client.lua:411:RegisterNetEvent('qb-storerobbery:client:setRegisterStatus', function(batch, val)
+./client.lua:412:    -- Has to be a better way maybe like adding a unique id to identify the register
+./client.lua:414:        Config.Registers[batch] = val
+./client.lua:417:            Config.Registers[k] = batch[k]
+./client.lua:422:RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
+./client.lua:426:RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords)
+./client.lua:427:    if (PlayerJob.name == 'police' or PlayerJob.type == 'leo') and onDuty then
+./client.lua:429:        TriggerServerEvent('police:server:policeAlert', Lang:t('email.storerobbery_progress'))
