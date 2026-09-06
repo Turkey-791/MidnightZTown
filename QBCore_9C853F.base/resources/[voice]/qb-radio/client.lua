@@ -28,35 +28,10 @@ local function SplitStr(inputstr, sep)
     return t
 end
 
-local function HasChannelAccess(channel)
-    local config = Config.RestrictedChannels[channel]
-    if not config then return true end -- No restrictions = open channel
-
-    -- Check job access (requires onduty)
-    if config.jobs then
-        for _, job in ipairs(config.jobs) do
-            if PlayerData.job and PlayerData.job.name == job and PlayerData.job.onduty then
-                return true
-            end
-        end
-    end
-
-    -- Check gang access
-    if config.gangs then
-        for _, gang in ipairs(config.gangs) do
-            if PlayerData.gang and PlayerData.gang.name == gang then
-                return true
-            end
-        end
-    end
-
-    return false
-end
-
 local function connecttoradio(channel)
     if channel > Config.MaxFrequency or channel <= 0 then QBCore.Functions.Notify(Lang:t('restricted_channel_error'), 'error') return false end
     if Config.RestrictedChannels[channel] ~= nil then
-        if not HasChannelAccess(channel) then
+        if not Config.RestrictedChannels[channel][PlayerData.job.name] or not PlayerData.job.onduty then
             QBCore.Functions.Notify(Lang:t('restricted_channel_error'), 'error')
             return false
         end
