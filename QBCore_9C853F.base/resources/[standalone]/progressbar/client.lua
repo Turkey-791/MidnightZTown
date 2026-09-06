@@ -220,8 +220,15 @@ end)
 -- NUI Callback
 
 RegisterNUICallback('FinishAction', function(data, cb)
+
+    print("^2[PROGRESSBAR DEBUG] FinishAction NUI callback RECEIVED^7")
+
     ActionCleanup()
+
+    print("^2[PROGRESSBAR DEBUG] ActionCleanup completed^7")
+
     cb('ok')
+
 end)
 
 -- Exports

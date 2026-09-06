@@ -143,8 +143,6 @@ CreateThread(function()
     if GetGameBuildNumber() >= 2060 then
         DiamondCasino.LoadDefault() -- 1100.000, 220.000, -50.000
         DiamondPenthouse.LoadDefault() -- 976.636, 70.295, 115.164
-        DiamondArcade.LoadDefault() -- 2732.000, -380.000, -50.000
-        DiamondArcadeBasement.LoadDefault() -- 2710.0, -360.780, -56.0
     end
 
     -- ====================================================================
@@ -231,36 +229,5 @@ CreateThread(function()
         AgentsOffice.LoadDefault() -- 2149.71, 4787.76, -47.0
         AgentsAirstrip.LoadDefault() -- -2106.98, 1468.31, 282.0
         AgentsHangarDoor.LoadDefault() -- -2632.43, 2963.23, 8.5
-    end
-
-    -- ====================================================================
-    -- =----------------------- [DLC: Money Fronts] ----------------------=
-    -- ====================================================================
-    if IsDlcPresent(`mp2025_01`) then
-        MoneyCarwash.LoadDefault() -- 26.074, -1398.979, -75.0
-        MoneyOffice.LoadDefault() -- -1160.493, -1538.932, -50.0
-    end
-
-    -- ====================================================================
-    -- =---------------- [DLC: A Safehouse in the Hills] -----------------=
-    -- ====================================================================
-    if IsDlcPresent(`mp2025_02`) then
-        Mansion1.LoadDefault() -- 543.852, 712.754, 201.0
-        Mansion2.LoadDefault() -- -1630.434, 470.852, 128.0
-        Mansion3.LoadDefault() -- -2601.712, 1874.826, 166.0
-        MansionBasement1.LoadDefault()
-        MansionBasement2.LoadDefault()
-        MansionBasement3.LoadDefault()
-    end
-
-    -- ====================================================================
-    -- =----------------- [DLC: The Kortz Center Heist] ------------------=
-    -- ====================================================================
-    if IsDlcPresent(`mp2026_01`) then
-        KortzMuseum.LoadDefault() -- -2242.157, 270.780, 173.5
-        KortzExhibition.LoadDefault() -- 2603.167, 5903.761, -50.0
-        KortzBasement.LoadDefault() -- 2631.411, 5893.864, -62.0
-        KortzLoadingBay.LoadDefault() -- 2693.671, 5877.493, -62.0
-        KortzWorkshop.LoadDefault() -- 2583.915, 5961.410, -50.0
     end
 end)

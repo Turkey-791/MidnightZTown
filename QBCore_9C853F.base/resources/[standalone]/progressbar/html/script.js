@@ -59,10 +59,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
         },
 
         onComplete: function () {
+
+            console.log("[PROGRESSBAR DEBUG] onComplete START");
+
             this.progressContainer.style.display = "none";
+
             this.progressBar.style.width = "0";
+
             this.progressPercentage.textContent = "";
+
+            console.log("[PROGRESSBAR DEBUG] calling postAction(FinishAction)");
+
             this.postAction("FinishAction");
+
+            console.log("[PROGRESSBAR DEBUG] postAction(FinishAction) called");
+
         },
 
         onCancel: function () {
