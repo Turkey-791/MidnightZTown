@@ -14,18 +14,18 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---  テーブル QBCore_9C853F.player_outfits の構造をダンプしています
+--  テーブル QBCore_7F2650.player_outfits の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `player_outfits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `citizenid` varchar(11) DEFAULT NULL,
-  `outfitname` varchar(50) NOT NULL,
+  `citizenid` varchar(50) DEFAULT NULL,
+  `outfitname` varchar(50) NOT NULL DEFAULT '0',
   `model` varchar(50) DEFAULT NULL,
-  `skin` text DEFAULT NULL,
-  `outfitId` varchar(50) NOT NULL,
+  `props` varchar(1000) DEFAULT NULL,
+  `components` varchar(1500) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `citizenid` (`citizenid`),
-  KEY `outfitId` (`outfitId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  UNIQUE KEY `citizenid_outfitname_model` (`citizenid`,`outfitname`,`model`),
+  KEY `citizenid` (`citizenid`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- エクスポートするデータが選択されていません
 
